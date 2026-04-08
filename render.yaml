@@ -43,7 +43,6 @@ services:
   - type: web
     name: planno-web
     runtime: static
-    plan: free
     rootDir: frontend
     buildCommand: npm install && npm run build
     staticPublishPath: frontend/dist/frontend/browser
