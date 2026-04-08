@@ -45,7 +45,7 @@ services:
     runtime: static
     rootDir: frontend
     buildCommand: npm install && npm run build
-    staticPublishPath: frontend/dist/frontend/browser
+    staticPublishPath: dist/frontend/browser
     autoDeployTrigger: commit
     envVars:
       - key: PLANNO_API_BASE_URL
