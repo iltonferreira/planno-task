@@ -189,6 +189,71 @@
               </article>
             }
           </div>
+
+          <div class="calendar-agenda-mobile">
+            @if (mobileAgendaDays().length) {
+              @for (cell of mobileAgendaDays(); track cell.isoDate) {
+                <article class="calendar-agenda-day">
+                  <div class="calendar-agenda-day__head">
+                    <div>
+                      <strong>{{ formatAgendaDay(cell.date) }}</strong>
+                      <span>
+                        @if (cell.isToday) {
+                          Hoje
+                        } @else {
+                          {{ cell.tasks.length + cell.googleEvents.length }} item(ns)
+                        }
+                      </span>
+                    </div>
+
+                    @if (!cell.isToday) {
+                      <span class="pill pill--soft">
+                        {{ cell.tasks.length + cell.googleEvents.length }} item(ns)
+                      </span>
+                    }
+                  </div>
+
+                  <div class="calendar-agenda-day__stack">
+                    @for (task of cell.tasks.slice(0, 3); track task.id) {
+                      <div class="calendar-task">
+                        <div class="calendar-task__top">
+                          <span class="pill">{{ task.priority }}</span>
+                          <span>{{ task.status }}</span>
+                        </div>
+                        <strong>{{ task.title }}</strong>
+                        <small>{{ task.projectName || 'Sem projeto' }}</small>
+                      </div>
+                    }
+
+                    @for (event of cell.googleEvents.slice(0, 3); track event.eventId) {
+                      <div class="calendar-task calendar-task--google">
+                        <div class="calendar-task__top">
+                          <span class="pill pill--soft">Google</span>
+                          <span>{{ event.allDay ? 'Dia todo' : 'Com hora' }}</span>
+                        </div>
+                        <strong>{{ event.summary }}</strong>
+                        <small>
+                          @if (event.linkedTaskId) {
+                            Vinculado a tarefa #{{ event.linkedTaskId }}
+                          } @else {
+                            Evento externo
+                          }
+                        </small>
+                      </div>
+                    }
+
+                    @if (cell.tasks.length + cell.googleEvents.length > 6) {
+                      <div class="calendar-task calendar-task--more">
+                        +{{ cell.tasks.length + cell.googleEvents.length - 6 }} item(ns) adicionais
+                      </div>
+                    }
+                  </div>
+                </article>
+              }
+            } @else {
+              <div class="empty-inline">Nenhum item deste mes para mostrar no celular.</div>
+            }
+          </div>
         </div>
       }
     </article>

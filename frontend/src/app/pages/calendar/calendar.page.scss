@@ -32,6 +32,10 @@
   padding-bottom: 0.25rem;
 }
 
+.calendar-agenda-mobile {
+  display: none;
+}
+
 .calendar-grid {
   min-width: 760px;
   display: grid;
@@ -126,6 +130,38 @@
   text-align: center;
 }
 
+.calendar-agenda-day {
+  display: grid;
+  gap: 0.75rem;
+  padding: 0.95rem;
+  border-radius: 16px;
+  background: var(--surface-subtle);
+  border: 1px solid var(--surface-stroke);
+}
+
+.calendar-agenda-day__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.calendar-agenda-day__head strong,
+.calendar-agenda-day__head span {
+  display: block;
+}
+
+.calendar-agenda-day__head span {
+  margin-top: 0.2rem;
+  color: var(--text-soft);
+  font-size: 0.82rem;
+}
+
+.calendar-agenda-day__stack {
+  display: grid;
+  gap: 0.55rem;
+}
+
 .calendar-side {
   display: grid;
   gap: 1rem;
@@ -139,6 +175,10 @@
 }
 
 @media (max-width: 720px) {
+  .metric-grid--calendar {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .calendar-header-actions,
   .calendar-toolbar {
     width: 100%;
@@ -158,5 +198,65 @@
   .calendar-day {
     min-height: 160px;
     padding: 0.75rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .calendar-surface__head {
+    align-items: flex-start;
+  }
+
+  .calendar-toolbar {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .calendar-toolbar > * {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .calendar-scroll {
+    overflow: visible;
+  }
+
+  .calendar-grid {
+    display: none;
+  }
+
+  .calendar-agenda-mobile {
+    display: grid;
+    gap: 0.85rem;
+  }
+
+  .calendar-header-actions > * {
+    width: 100%;
+  }
+
+  .calendar-task {
+    padding: 0.8rem;
+  }
+
+  .calendar-task__top {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 520px) {
+  .metric-grid--calendar {
+    grid-template-columns: 1fr;
+  }
+
+  .calendar-toolbar {
+    grid-template-columns: 1fr;
+  }
+
+  .calendar-agenda-day {
+    padding: 0.85rem;
+  }
+
+  .calendar-agenda-day__head {
+    flex-direction: column;
   }
 }

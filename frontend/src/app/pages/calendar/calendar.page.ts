@@ -116,6 +116,11 @@ export class CalendarPageComponent {
   readonly externalOnlyEvents = computed(() =>
     this.googleEvents().filter((event) => event.linkedTaskId === null)
   );
+  readonly mobileAgendaDays = computed(() =>
+    this.calendarCells().filter(
+      (cell) => cell.inCurrentMonth && (cell.isToday || cell.tasks.length > 0 || cell.googleEvents.length > 0)
+    )
+  );
   readonly calendarCells = computed(() => {
     const month = this.visibleMonth();
     const firstVisibleDay = new Date(month);
@@ -239,6 +244,14 @@ export class CalendarPageComponent {
 
   trackCell(_: number, cell: CalendarCell): string {
     return cell.isoDate;
+  }
+
+  formatAgendaDay(date: Date): string {
+    return date.toLocaleDateString('pt-BR', {
+      weekday: 'short',
+      day: '2-digit',
+      month: 'short'
+    });
   }
 
   private async reloadCalendarData(): Promise<void> {
