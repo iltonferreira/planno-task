@@ -1,33 +1,66 @@
 <div class="app-shell">
-  <button class="mobile-nav-toggle ghost-button" type="button" (click)="toggleSidebar()">
-    Menu
-  </button>
-
-  <header class="shell-header">
-    <div class="shell-header__bar">
-      <a class="brand-block brand-block--header" routerLink="/dashboard">
+  <aside class="shell-sidebar shell-sidebar--desktop">
+    <div class="shell-sidebar__scroll">
+      <a class="brand-block" routerLink="/dashboard">
         <span class="brand-mark">
           <img src="planno-logo.png" alt="Planno logo" />
         </span>
         <div class="brand-copy">
           <span class="brand-kicker">Planno workspace</span>
-          <strong>{{ authStore.user()?.tenantName || 'Seu backoffice em um unico lugar' }}</strong>
+          <strong>{{ authStore.user()?.tenantName || 'Workspace operacional' }}</strong>
+          <p>{{ workspaceStatusCopy() }}</p>
         </div>
       </a>
 
-      <nav class="desktop-nav">
-        @for (item of navigation(); track item.path) {
-          <a [routerLink]="item.path" routerLinkActive="is-active" class="desktop-nav__link">
-            {{ item.label }}
-          </a>
-        }
-      </nav>
+      <div class="sidebar-section">
+        <p class="sidebar-label">Navegacao</p>
+        <nav class="nav-stack">
+          @for (item of navigation(); track item.path) {
+            <a [routerLink]="item.path" routerLinkActive="is-active" class="nav-link">
+              <span class="nav-link__dot"></span>
+              <div>
+                <strong>{{ item.label }}</strong>
+                <span>{{ item.caption }}</span>
+              </div>
+            </a>
+          }
+        </nav>
+      </div>
 
-      <div class="shell-header__actions">
+      <div class="sidebar-foot">
+        @if (platformSubscriptionStore.isBillingAdminTenant()) {
+          <div class="pill pill--soft">Equipe interna com painel Mercado Pago liberado</div>
+        } @else if (platformSubscriptionStore.subscription()?.status) {
+          <div class="pill pill--soft">
+            Status do plano: {{ platformSubscriptionStore.subscription()?.status }}
+          </div>
+        }
+      </div>
+    </div>
+  </aside>
+
+  <div class="shell-frame">
+    <header class="shell-topbar">
+      <div class="shell-topbar__left">
+        <button class="mobile-nav-toggle ghost-button" type="button" (click)="toggleSidebar()">
+          Menu
+        </button>
+
+        <div class="shell-breadcrumb">
+          <span>Planno</span>
+          <span>/</span>
+          <strong>{{ activeNavigation().label }}</strong>
+        </div>
+
+        <p class="shell-context">{{ activeNavigation().caption }}</p>
+      </div>
+
+      <div class="shell-topbar__actions">
         @if (authStore.user(); as user) {
           @if (platformSubscriptionStore.requiresAction()) {
             <a class="ghost-button" routerLink="/workspace-plan">Meu plano</a>
           }
+
           <div class="user-pill">
             <div class="user-pill__avatar">{{ user.name.slice(0, 1) }}</div>
             <div>
@@ -35,28 +68,35 @@
               <span>{{ user.email }}</span>
             </div>
           </div>
-          <button class="primary-button" type="button" (click)="logout()">Sair</button>
+
+          <button class="ghost-button" type="button" (click)="logout()">Sair</button>
         } @else {
           <button class="primary-button" type="button" (click)="authStore.open()">
             Entrar no workspace
           </button>
         }
       </div>
-    </div>
-  </header>
+    </header>
 
-  <aside class="sidebar" [class.is-open]="sidebarOpen()">
-    <div class="sidebar__inner">
+    <main class="main-shell">
+      <div class="document-frame">
+        <section class="content-shell">
+          <router-outlet></router-outlet>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <aside class="shell-sidebar shell-sidebar--mobile" [class.is-open]="sidebarOpen()">
+    <div class="shell-sidebar__scroll">
       <a class="brand-block" routerLink="/dashboard" (click)="closeSidebar()">
         <span class="brand-mark">
           <img src="planno-logo.png" alt="Planno logo" />
         </span>
         <div class="brand-copy">
           <span class="brand-kicker">Planno workspace</span>
-          <strong>{{ authStore.user()?.tenantName || 'Seu backoffice em um unico lugar' }}</strong>
-          <p>
-            Clientes, entregas, documentos e receita organizados com uma leitura mais limpa e calma.
-          </p>
+          <strong>{{ authStore.user()?.tenantName || 'Workspace operacional' }}</strong>
+          <p>{{ workspaceStatusCopy() }}</p>
         </div>
       </a>
 
@@ -79,28 +119,12 @@
           }
         </nav>
       </div>
-
-      <div class="sidebar-foot">
-        <div class="workspace-chip">
-          <span class="status-dot"></span>
-          <div>
-            <strong>{{ authStore.user()?.tenantName || 'Workspace pendente' }}</strong>
-            <span>{{ workspaceStatusCopy() }}</span>
-          </div>
-        </div>
-      </div>
     </div>
   </aside>
 
   @if (sidebarOpen()) {
     <button class="sidebar-overlay" type="button" (click)="closeSidebar()"></button>
   }
-
-  <main class="main-shell">
-    <section class="content-shell">
-      <router-outlet></router-outlet>
-    </section>
-  </main>
 
   <app-auth-modal></app-auth-modal>
 </div>

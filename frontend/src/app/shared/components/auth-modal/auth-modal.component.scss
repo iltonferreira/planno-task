@@ -113,3 +113,53 @@
     overflow-y: auto;
   }
 }
+
+/* Notion-like auth test */
+.auth-modal {
+  grid-template-columns: minmax(320px, 420px) minmax(360px, 520px);
+  gap: 1rem;
+}
+
+.auth-modal__hero,
+.auth-modal__panel {
+  border-radius: 16px;
+  border-color: var(--surface-stroke);
+  box-shadow: none;
+}
+
+.auth-modal__hero {
+  background: var(--surface-subtle);
+}
+
+.auth-modal__brand-mark {
+  width: 3.35rem;
+  height: 3.35rem;
+  border-radius: 12px;
+  background: var(--surface-elevated);
+  border-color: var(--surface-stroke);
+}
+
+.auth-modal__brand-mark img {
+  width: 2rem;
+}
+
+.auth-modal__hero h2 {
+  font-size: clamp(1.8rem, 3.6vw, 2.45rem);
+  line-height: 1.02;
+}
+
+.auth-modal__highlights span {
+  border-radius: 999px;
+  background: var(--surface-elevated);
+  border-color: var(--surface-stroke);
+  color: var(--text-soft);
+}
+
+.auth-modal__panel {
+  padding: 1.5rem;
+  background: var(--surface-elevated);
+}
+
+.auth-modal__top h3 {
+  font-size: 1.35rem;
+}
