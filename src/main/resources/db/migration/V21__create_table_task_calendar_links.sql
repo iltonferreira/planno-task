@@ -1,4 +1,4 @@
-CREATE TABLE task_calendar_links (
+CREATE TABLE IF NOT EXISTS task_calendar_links (
     id BIGSERIAL PRIMARY KEY,
     task_id BIGINT NOT NULL REFERENCES tasks(id) ON DELETE CASCADE,
     user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -12,8 +12,8 @@ CREATE TABLE task_calendar_links (
     CONSTRAINT uk_task_calendar_link_user_event UNIQUE (user_id, calendar_id, external_event_id)
 );
 
-CREATE INDEX idx_task_calendar_links_task_id
+CREATE INDEX IF NOT EXISTS idx_task_calendar_links_task_id
     ON task_calendar_links(task_id);
 
-CREATE INDEX idx_task_calendar_links_user_id
+CREATE INDEX IF NOT EXISTS idx_task_calendar_links_user_id
     ON task_calendar_links(user_id);

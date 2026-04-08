@@ -1,9 +1,0 @@
-
-> frontend@0.0.0 start
-> ng serve --proxy-config proxy.conf.json --host 0.0.0.0
-
-[33m>[39m Building...
-[32m√[39m Building...
-Application bundle generation failed. [2.079 seconds] - 2026-04-08T20:45:16.626Z
-
-Watch mode enabled. Watching for file changes...

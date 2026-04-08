@@ -118,8 +118,8 @@
               <div class="stack-row stack-row--stretch">
                 <div>
                   <strong>{{ customer.tenantName }}</strong>
-                  <span>{{ customer.status }} - {{ customer.amount | currency:'BRL':'symbol':'1.2-2' }}</span>
-                  <span>{{ customer.payerEmail || 'Email pagador nao informado' }}</span>
+                  <span>{{ customerModeLabel(customer.billingMode) }} - {{ customerStatusLabel(customer.status) }} - {{ customer.amount | currency:'BRL':'symbol':'1.2-2' }}</span>
+                  <span>{{ customer.adminEmail || customer.payerEmail || 'Email principal nao informado' }}</span>
                   @if (customer.nextBillingDate) {
                     <span>Proxima cobranca em {{ customer.nextBillingDate | date:'dd/MM/yyyy' }}</span>
                   }
@@ -127,6 +127,11 @@
                 <div class="subscription-meta">
                   <span>{{ customer.tenantSlug }}</span>
                   <span>{{ customer.tenantActive ? 'Tenant ativo' : 'Tenant inativo' }}</span>
+                  @if (customer.checkoutUrl && customer.status !== 'ACTIVE') {
+                    <a class="inline-link" [href]="customer.checkoutUrl" target="_blank" rel="noopener">
+                      Abrir checkout
+                    </a>
+                  }
                 </div>
               </div>
             }

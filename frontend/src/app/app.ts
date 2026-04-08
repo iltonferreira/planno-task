@@ -90,6 +90,10 @@ export class App {
       return 'Entre para liberar o workspace.';
     }
 
+    if (this.platformSubscriptionStore.isComplimentaryTenant()) {
+      return 'Workspace liberado em cortesia pela equipe Planno.';
+    }
+
     return this.platformSubscriptionStore.subscription()?.status === 'ACTIVE'
       ? 'Plano ativo e pronto para operar.'
       : 'Acompanhe a assinatura do workspace em Meu plano.';

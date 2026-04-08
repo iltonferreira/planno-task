@@ -66,6 +66,25 @@ export class BillingAdminPageComponent {
     });
   }
 
+  customerModeLabel(mode: string): string {
+    return mode === 'COMPLIMENTARY' ? 'Cortesia' : 'Assinatura';
+  }
+
+  customerStatusLabel(status: string): string {
+    switch (status) {
+      case 'ACTIVE':
+        return 'Ativo';
+      case 'PAST_DUE':
+        return 'Pagamento pendente';
+      case 'CANCELLED':
+        return 'Cancelado';
+      case 'COMPLIMENTARY':
+        return 'Cortesia';
+      default:
+        return 'Nao iniciado';
+    }
+  }
+
   async submit(): Promise<void> {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
