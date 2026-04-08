@@ -139,7 +139,8 @@ public class GoogleDriveIntegrationService {
                 .queryParam("include_granted_scopes", "true")
                 .queryParam("prompt", "consent")
                 .queryParam("state", oauthState.getState())
-                .build(true)
+                .build()
+                .encode()
                 .toUriString();
 
         return new GoogleDriveAuthorizationUrlResponseDTO(authorizationUrl);
@@ -338,7 +339,12 @@ public class GoogleDriveIntegrationService {
     }
 
     private List<String> parseScopes() {
-        return List.of(scopes.split(",")).stream()
+        String normalizedScopes = scopes
+                .replace("\"", " ")
+                .replace("'", " ")
+                .trim();
+
+        return List.of(normalizedScopes.split("[,\\s]+")).stream()
                 .map(String::trim)
                 .filter(scope -> !scope.isBlank())
                 .toList();

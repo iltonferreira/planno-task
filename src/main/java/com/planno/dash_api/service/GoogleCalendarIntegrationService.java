@@ -154,7 +154,8 @@ public class GoogleCalendarIntegrationService {
                 .queryParam("include_granted_scopes", "true")
                 .queryParam("prompt", "consent")
                 .queryParam("state", state.getState())
-                .build(true)
+                .build()
+                .encode()
                 .toUriString();
 
         return new GoogleCalendarAuthorizationUrlResponseDTO(authorizationUrl);
@@ -585,7 +586,12 @@ public class GoogleCalendarIntegrationService {
     }
 
     private List<String> parseScopes() {
-        return List.of(scopes.split(",")).stream()
+        String normalizedScopes = scopes
+                .replace("\"", " ")
+                .replace("'", " ")
+                .trim();
+
+        return List.of(normalizedScopes.split("[,\\s]+")).stream()
                 .map(String::trim)
                 .filter(scope -> !scope.isBlank())
                 .toList();
