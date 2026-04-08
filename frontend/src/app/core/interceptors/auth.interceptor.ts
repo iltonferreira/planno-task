@@ -3,14 +3,19 @@ import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, throwError } from 'rxjs';
 
+import { resolveApiUrl } from '../config/runtime-config';
+
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
+  const normalizedRequest = req.url.startsWith('/api')
+    ? req.clone({ url: resolveApiUrl(req.url) })
+    : req;
   const token = globalThis.localStorage?.getItem('planno.token');
-  const isPublicRequest = !token || req.url.includes('/api/auth/login');
+  const isPublicRequest = !token || normalizedRequest.url.includes('/api/auth/login');
 
   const authorizedRequest = isPublicRequest
-    ? req
-    : req.clone({
+    ? normalizedRequest
+    : normalizedRequest.clone({
         setHeaders: {
           Authorization: `Bearer ${token}`
         }
@@ -21,7 +26,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
       if (
         error instanceof HttpErrorResponse &&
         error.status === 402 &&
-        !req.url.includes('/api/platform-billing')
+        !authorizedRequest.url.includes('/api/platform-billing')
       ) {
         void router.navigateByUrl('/workspace-plan');
       }

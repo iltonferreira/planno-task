@@ -2,6 +2,10 @@
   "name": "frontend",
   "version": "0.0.0",
   "scripts": {
+    "prepare:runtime-config": "node scripts/write-runtime-config.mjs",
+    "prestart": "npm run prepare:runtime-config",
+    "prebuild": "npm run prepare:runtime-config",
+    "prewatch": "npm run prepare:runtime-config",
     "ng": "ng",
     "start": "ng serve --proxy-config proxy.conf.json",
     "build": "ng build",
