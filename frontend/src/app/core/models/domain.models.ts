@@ -206,6 +206,7 @@ export interface DocumentAsset {
 }
 
 export interface GoogleDriveConnectionStatus {
+  enabled: boolean;
   configured: boolean;
   connected: boolean;
   googleAccountEmail: string | null;
@@ -214,6 +215,7 @@ export interface GoogleDriveConnectionStatus {
 }
 
 export interface GoogleCalendarConnectionStatus {
+  enabled: boolean;
   configured: boolean;
   connected: boolean;
   googleAccountEmail: string | null;

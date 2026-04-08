@@ -94,6 +94,7 @@ public class GoogleDriveIntegrationService {
         Long tenantId = currentUserService.getCurrentTenantId();
         return connectionRepository.findByTenantId(tenantId)
                 .map(connection -> new GoogleDriveConnectionStatusResponseDTO(
+                        enabled,
                         isConfigured(),
                         true,
                         connection.getGoogleAccountEmail(),
@@ -101,6 +102,7 @@ public class GoogleDriveIntegrationService {
                         connection.getExpiresAt()
                 ))
                 .orElseGet(() -> new GoogleDriveConnectionStatusResponseDTO(
+                        enabled,
                         isConfigured(),
                         false,
                         null,

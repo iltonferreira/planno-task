@@ -51,6 +51,8 @@
         <span class="pill pill--success">Conectado</span>
       } @else if (googleCalendarStore.status()?.configured) {
         <span class="pill pill--soft">Pronto para conectar</span>
+      } @else if (googleCalendarStore.status() && !googleCalendarStore.status()?.enabled) {
+        <span class="pill pill--danger">Integracao desativada</span>
       } @else {
         <span class="pill pill--danger">Backend nao configurado</span>
       }
@@ -71,6 +73,8 @@
               Eventos do calendario {{ googleCalendarStore.status()?.defaultCalendarId || 'primary' }} serao mostrados aqui e podem virar tarefas no Planno.
             } @else if (googleCalendarStore.status()?.configured) {
               Conecte sua conta para ver eventos do Google e publicar tarefas da plataforma na sua agenda.
+            } @else if (googleCalendarStore.status() && !googleCalendarStore.status()?.enabled) {
+              A integracao do Google Calendar esta desativada no backend atual. No Render, ative GOOGLE_CALENDAR_ENABLED=true e configure as credenciais OAuth antes de conectar a agenda.
             } @else {
               Faltam GOOGLE_CALENDAR_CLIENT_ID, GOOGLE_CALENDAR_CLIENT_SECRET e GOOGLE_CALENDAR_REDIRECT_URI no backend.
             }

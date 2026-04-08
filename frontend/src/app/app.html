@@ -97,35 +97,6 @@
   }
 
   <main class="main-shell">
-    <section class="page-banner">
-      <div class="page-banner__title">
-        <p class="eyebrow">Planno / {{ activeNavigation().label }}</p>
-        <h1>{{ activeNavigation().label }}</h1>
-        <p class="page-banner__copy">
-          {{ activeNavigation().caption }} para
-          {{ authStore.user()?.tenantName || 'um onboarding sem atrito' }}.
-        </p>
-      </div>
-
-      <div class="page-banner__meta">
-        <div class="workspace-chip">
-          <span class="status-dot"></span>
-          <div>
-            <strong>{{ authStore.user()?.tenantName || 'Workspace pendente' }}</strong>
-            <span>{{ workspaceStatusCopy() }}</span>
-          </div>
-        </div>
-
-        @if (platformSubscriptionStore.isBillingAdminTenant()) {
-          <div class="pill pill--soft">Equipe interna com painel Mercado Pago liberado</div>
-        } @else if (platformSubscriptionStore.subscription()?.status) {
-          <div class="pill pill--soft">
-            Status do plano: {{ platformSubscriptionStore.subscription()?.status }}
-          </div>
-        }
-      </div>
-    </section>
-
     <section class="content-shell">
       <router-outlet></router-outlet>
     </section>

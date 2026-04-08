@@ -112,6 +112,7 @@ public class GoogleCalendarIntegrationService {
         Long userId = currentUserService.getCurrentUser().getId();
         return connectionRepository.findByUserId(userId)
                 .map(connection -> new GoogleCalendarConnectionStatusResponseDTO(
+                        enabled,
                         isConfigured(),
                         true,
                         connection.getGoogleAccountEmail(),
@@ -119,6 +120,7 @@ public class GoogleCalendarIntegrationService {
                         connection.getExpiresAt()
                 ))
                 .orElseGet(() -> new GoogleCalendarConnectionStatusResponseDTO(
+                        enabled,
                         isConfigured(),
                         false,
                         null,

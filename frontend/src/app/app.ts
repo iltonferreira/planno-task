@@ -1,8 +1,6 @@
 ﻿import { CommonModule } from '@angular/common';
 import { Component, computed, effect, inject, signal, untracked } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { filter, map, startWith } from 'rxjs';
+import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
 import { AuthStore } from './core/stores/auth.store';
 import { ClientsStore } from './core/stores/clients.store';
@@ -47,14 +45,6 @@ export class App {
   private readonly googleCalendarStore = inject(GoogleCalendarStore);
   private readonly knowledgeBaseStore = inject(KnowledgeBaseStore);
   readonly platformSubscriptionStore = inject(PlatformSubscriptionStore);
-  private readonly currentUrl = toSignal(
-    this.router.events.pipe(
-      filter((event): event is NavigationEnd => event instanceof NavigationEnd),
-      map((event) => event.urlAfterRedirects),
-      startWith(this.router.url),
-    ),
-    { initialValue: this.router.url },
-  );
 
   readonly sidebarOpen = signal(false);
   private readonly baseNavigation: NavigationItem[] = [
@@ -98,15 +88,6 @@ export class App {
       ? 'Plano ativo e pronto para operar.'
       : 'Acompanhe a assinatura do workspace em Meu plano.';
   });
-  readonly activeNavigation = computed(() => {
-    const currentUrl = this.currentUrl();
-    return (
-      this.navigation().find(
-        (item) => currentUrl === item.path || currentUrl.startsWith(`${item.path}/`),
-      ) ?? this.navigation()[0]
-    );
-  });
-
   constructor() {
     if (!this.authStore.isAuthenticated()) {
       this.authStore.ensureModalOpen();

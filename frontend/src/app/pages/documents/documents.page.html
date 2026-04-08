@@ -18,6 +18,8 @@
         <span class="pill pill--success">Conectado</span>
       } @else if (driveStatus()?.configured) {
         <span class="pill pill--soft">Pronto para conectar</span>
+      } @else if (driveStatus() && !driveStatus()?.enabled) {
+        <span class="pill pill--danger">Integracao desativada</span>
       } @else {
         <span class="pill pill--danger">Backend nao configurado</span>
       }
@@ -38,6 +40,8 @@
               A aplicacao vai operar no seu Drive com escopo total e criar a estrutura automaticamente a partir da raiz {{ driveStatus()?.rootFolderId || 'root' }}.
             } @else if (driveStatus()?.configured) {
               O backend ja esta pronto para abrir o consentimento OAuth e conectar sua conta Google.
+            } @else if (driveStatus() && !driveStatus()?.enabled) {
+              A integracao do Google Drive esta desativada no backend atual. No Render, ative GOOGLE_DRIVE_ENABLED=true e configure as credenciais OAuth antes de tentar subir arquivos.
             } @else {
               Faltam GOOGLE_DRIVE_CLIENT_ID, GOOGLE_DRIVE_CLIENT_SECRET e GOOGLE_DRIVE_REDIRECT_URI no backend.
             }
