@@ -1,0 +1,130 @@
+<section class="page-shell">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">Billing</p>
+      <h1>Meu plano</h1>
+      <p class="page-copy">
+        Essa e a assinatura SaaS do seu workspace. O valor mensal e cobrado sempre pela sua conta
+        Mercado Pago principal, enquanto pagamentos e assinaturas do tenant seguem focados no
+        controle interno da operacao.
+      </p>
+    </div>
+    <span class="pill pill--soft">{{ statusMeta().label }}</span>
+  </header>
+
+  <div class="metric-grid">
+    <article class="metric-card">
+      <span>Plano</span>
+      <strong>{{ subscription()?.planName || 'Planno Pro' }}</strong>
+      <small>{{ subscription()?.planCode || 'planno-pro-monthly' }}</small>
+    </article>
+    <article class="metric-card">
+      <span>Valor mensal</span>
+      <strong>{{ (subscription()?.amount ?? 39.9) | currency:'BRL':'symbol':'1.2-2' }}</strong>
+      <small>Cobranca centralizada na sua conta Mercado Pago</small>
+    </article>
+    <article class="metric-card">
+      <span>Proxima cobranca</span>
+      <strong>{{
+        subscription()?.nextBillingDate ? (subscription()?.nextBillingDate | date:'dd/MM/yyyy') : '--'
+      }}</strong>
+      <small>Atualizado pelo webhook oficial do Mercado Pago</small>
+    </article>
+    <article class="metric-card">
+      <span>Ultimo pagamento</span>
+      <strong>{{
+        subscription()?.lastPaymentAt ? (subscription()?.lastPaymentAt | date:'dd/MM/yyyy') : '--'
+      }}</strong>
+      <small>Historico local da assinatura do workspace</small>
+    </article>
+  </div>
+
+  <div class="section-grid section-grid--two">
+    <article class="surface-card">
+      <div class="surface-head">
+        <div>
+          <p class="eyebrow">Assinatura</p>
+          <h2>Controle do workspace</h2>
+        </div>
+      </div>
+
+      <div class="plan-summary">
+        <div class="plan-summary__item">
+          <span>Status atual</span>
+          <strong>{{ statusMeta().label }}</strong>
+          <p>{{ statusMeta().description }}</p>
+        </div>
+
+        <div class="plan-summary__item">
+          <span>Email pagador</span>
+          <strong>{{ subscription()?.payerEmail || authStore.user()?.email || '--' }}</strong>
+          <p>Use esse e-mail como referencia da assinatura principal do tenant.</p>
+        </div>
+
+        <div class="plan-summary__item">
+          <span>Workspace</span>
+          <strong>{{ authStore.user()?.tenantName || 'Workspace atual' }}</strong>
+          <p>O plano governa o acesso do time inteiro ao produto.</p>
+        </div>
+      </div>
+
+      <div class="stack-actions">
+        @if (subscription()?.billingMode !== 'COMPLIMENTARY') {
+          <button
+            class="primary-button"
+            type="button"
+            [disabled]="platformSubscriptionStore.saving()"
+            (click)="openCheckout()"
+          >
+            {{ platformSubscriptionStore.saving() ? 'Abrindo checkout...' : actionLabel() }}
+          </button>
+        }
+
+        @if (subscription()?.checkoutUrl) {
+          <a
+            class="ghost-button plan-link"
+            [href]="subscription()?.checkoutUrl ?? '#'"
+            target="_blank"
+            rel="noopener"
+          >
+            Abrir ultimo checkout
+          </a>
+        }
+      </div>
+
+      @if (platformSubscriptionStore.error()) {
+        <div class="inline-error">{{ platformSubscriptionStore.error() }}</div>
+      }
+    </article>
+
+    <article class="surface-card">
+      <div class="surface-head">
+        <div>
+          <p class="eyebrow">Escopo</p>
+          <h2>O que esse billing cobre</h2>
+        </div>
+      </div>
+
+      <div class="stack-list">
+        <div class="stack-row">
+          <div>
+            <strong>Assinatura unica da plataforma</strong>
+            <span>Seu cliente paga o Planno para voce, e nao conecta uma conta Mercado Pago propria.</span>
+          </div>
+        </div>
+        <div class="stack-row">
+          <div>
+            <strong>Financeiro interno separado</strong>
+            <span>Pagamentos e assinaturas do tenant continuam servindo para controle de gastos e contratos internos.</span>
+          </div>
+        </div>
+        <div class="stack-row">
+          <div>
+            <strong>Bloqueio por status do plano</strong>
+            <span>Se a assinatura for cancelada, o sistema direciona o usuario para esta area ate a regularizacao.</span>
+          </div>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>

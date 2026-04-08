@@ -1,0 +1,38 @@
+:host {
+  display: block;
+}
+
+.provision-card {
+  display: grid;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  padding: 1rem 1.05rem;
+  border-radius: 18px;
+  background: var(--surface-subtle);
+  border: 1px solid var(--surface-stroke);
+}
+
+.provision-card strong,
+.provision-card span {
+  display: block;
+}
+
+.provision-card span,
+.customer-meta {
+  color: var(--text-soft);
+}
+
+.customer-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.inline-link {
+  display: inline-flex;
+  width: fit-content;
+  color: var(--accent-blue-deep);
+  text-decoration: none;
+  font-weight: 600;
+}

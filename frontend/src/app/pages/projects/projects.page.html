@@ -1,0 +1,115 @@
+<section class="page-shell">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">Delivery</p>
+      <h1>Projetos</h1>
+      <p class="page-copy">Planeje escopo, owner, cliente e janela de execucao com a mesma linguagem visual do restante do sistema.</p>
+    </div>
+    <span class="pill pill--soft">{{ projectsStore.items().length }} projetos registrados</span>
+  </header>
+
+  <div class="section-grid section-grid--two">
+    <article class="surface-card">
+      <div class="surface-head">
+        <div>
+          <p class="eyebrow">Novo projeto</p>
+          <h2>Setup operacional</h2>
+        </div>
+      </div>
+
+      <form class="form-grid" [formGroup]="form" (ngSubmit)="submit()">
+        <label class="field field--full">
+          <span>Nome do projeto</span>
+          <input type="text" formControlName="name" placeholder="Implantacao do portal do cliente" />
+        </label>
+
+        <label class="field field--full">
+          <span>Descricao</span>
+          <textarea rows="4" formControlName="description" placeholder="Objetivo, entregas e risco principal"></textarea>
+        </label>
+
+        <label class="field">
+          <span>Status</span>
+          <select formControlName="status">
+            @for (status of statuses; track status) {
+              <option [value]="status">{{ status }}</option>
+            }
+          </select>
+        </label>
+
+        <label class="field">
+          <span>Budget</span>
+          <input type="number" min="0" formControlName="budget" />
+        </label>
+
+        <label class="field">
+          <span>Cliente</span>
+          <select formControlName="clientId">
+            <option [value]="0">Sem cliente</option>
+            @for (client of clientsStore.items(); track client.id) {
+              <option [value]="client.id">{{ client.name }}</option>
+            }
+          </select>
+        </label>
+
+        <label class="field">
+          <span>Owner</span>
+          <select formControlName="ownerUserId">
+            <option [value]="0">Sem owner</option>
+            @for (user of usersStore.items(); track user.id) {
+              <option [value]="user.id">{{ user.name }}</option>
+            }
+          </select>
+        </label>
+
+        <label class="field">
+          <span>Inicio</span>
+          <input type="date" formControlName="startDate" />
+        </label>
+
+        <label class="field">
+          <span>Fim</span>
+          <input type="date" formControlName="endDate" />
+        </label>
+
+        <button class="primary-button" type="submit" [disabled]="!authStore.isAuthenticated() || projectsStore.saving()">
+          {{ projectsStore.saving() ? 'Salvando...' : 'Criar projeto' }}
+        </button>
+      </form>
+
+      @if (projectsStore.error()) {
+        <div class="inline-error">{{ projectsStore.error() }}</div>
+      }
+    </article>
+
+    <article class="surface-card">
+      <div class="surface-head">
+        <div>
+          <p class="eyebrow">Backlog de entregas</p>
+          <h2>Visao resumida</h2>
+        </div>
+      </div>
+
+      @if (projectsStore.items().length) {
+        <div class="card-grid">
+          @for (project of projectsStore.items(); track project.id) {
+            <div class="mini-card">
+              <div class="mini-card__top">
+                <span class="pill">{{ project.status }}</span>
+                <strong>{{ project.budget || 0 | currency:'BRL':'symbol':'1.0-0' }}</strong>
+              </div>
+              <h3>{{ project.name }}</h3>
+              <p>{{ project.description || 'Sem descricao registrada.' }}</p>
+              <div class="mini-card__meta">
+                <span>{{ project.clientName || 'Sem cliente' }}</span>
+                <span>{{ project.ownerUser?.name || 'Sem owner' }}</span>
+              </div>
+            </div>
+          }
+        </div>
+      } @else {
+        <div class="empty-inline">Sem projetos cadastrados. Use o painel lateral para iniciar a operacao.</div>
+      }
+    </article>
+  </div>
+</section>

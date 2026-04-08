@@ -1,0 +1,39 @@
+:host {
+  display: block;
+}
+
+.plan-summary {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.plan-summary__item {
+  padding: 1rem 1.05rem;
+  border-radius: 18px;
+  background: var(--surface-subtle);
+  border: 1px solid var(--surface-stroke);
+}
+
+.plan-summary__item span,
+.plan-summary__item strong,
+.plan-summary__item p {
+  display: block;
+}
+
+.plan-summary__item span,
+.plan-summary__item p {
+  color: var(--text-soft);
+}
+
+.plan-summary__item strong {
+  margin: 0.35rem 0 0.45rem;
+}
+
+.plan-summary__item p {
+  margin: 0;
+  line-height: 1.6;
+}
+
+.plan-link {
+  text-decoration: none;
+}

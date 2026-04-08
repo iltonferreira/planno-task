@@ -1,0 +1,27 @@
+:host {
+  display: block;
+}
+
+.upload-dropzone {
+  display: grid;
+  gap: 1rem;
+}
+
+.row-actions {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.pill--success {
+  background: rgba(40, 167, 69, 0.14);
+  color: #1d7f3b;
+  border: 1px solid rgba(40, 167, 69, 0.24);
+}
+
+.pill--danger {
+  background: rgba(212, 76, 71, 0.14);
+  color: #b63b35;
+  border: 1px solid rgba(212, 76, 71, 0.22);
+}

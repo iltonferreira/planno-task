@@ -1,0 +1,180 @@
+<section class="page-shell">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">Agenda pessoal</p>
+      <h1>Calendario de tarefas</h1>
+      <p class="page-copy">
+        Veja em uma visao mensal tudo o que envolve voce, com foco nos prazos das tarefas
+        ligadas ao seu usuario no workspace.
+      </p>
+    </div>
+
+    <div class="calendar-header-actions">
+      <a class="ghost-button" routerLink="/tasks">Abrir Kanban</a>
+      <span class="pill">
+        {{ authStore.user()?.name || 'Meu calendario' }}
+      </span>
+    </div>
+  </header>
+
+  <div class="metric-grid metric-grid--calendar">
+    <article class="metric-card">
+      <span>Tarefas relacionadas</span>
+      <strong>{{ monthSummary().total }}</strong>
+      <small>Responsabilidade direta, participacao ou visibilidade pessoal.</small>
+    </article>
+
+    <article class="metric-card">
+      <span>Com prazo definido</span>
+      <strong>{{ monthSummary().scheduled }}</strong>
+      <small>Cards que entram na agenda e na leitura mensal.</small>
+    </article>
+
+    <article class="metric-card">
+      <span>Sem prazo</span>
+      <strong>{{ monthSummary().unscheduled }}</strong>
+      <small>Pendencias que ainda precisam de data para planejamento real.</small>
+    </article>
+
+    <article class="metric-card">
+      <span>Vencendo neste mes</span>
+      <strong>{{ monthSummary().dueInMonth }}</strong>
+      <small>Recorte do mes em foco para iPhone, Android e desktop.</small>
+    </article>
+  </div>
+
+  <div class="section-grid section-grid--calendar">
+    <article class="surface-card calendar-surface">
+      <div class="surface-head calendar-surface__head">
+        <div>
+          <p class="eyebrow">Mes em foco</p>
+          <h2>{{ monthLabel() }}</h2>
+        </div>
+
+        <div class="calendar-toolbar">
+          <button class="ghost-button" type="button" (click)="goToPreviousMonth()">Mes anterior</button>
+          <button class="ghost-button" type="button" (click)="goToCurrentMonth()">Hoje</button>
+          <button class="ghost-button" type="button" (click)="goToNextMonth()">Proximo mes</button>
+        </div>
+      </div>
+
+      @if (tasksStore.mineError()) {
+        <div class="inline-error">{{ tasksStore.mineError() }}</div>
+      } @else if (tasksStore.mineLoading()) {
+        <div class="empty-inline">Carregando seu calendario de tarefas...</div>
+      } @else {
+        <div class="calendar-scroll">
+          <div class="calendar-grid">
+            @for (label of weekDays; track label) {
+              <div class="calendar-grid__weekday">{{ label }}</div>
+            }
+
+            @for (cell of calendarCells(); track trackCell($index, cell)) {
+              <article
+                class="calendar-day"
+                [class.is-outside]="!cell.inCurrentMonth"
+                [class.is-today]="cell.isToday"
+              >
+                <div class="calendar-day__top">
+                  <strong>{{ cell.dayNumber }}</strong>
+                  @if (cell.tasks.length) {
+                    <span>{{ cell.tasks.length }} tarefa(s)</span>
+                  }
+                </div>
+
+                <div class="calendar-day__stack">
+                  @for (task of cell.tasks.slice(0, 3); track task.id) {
+                    <div class="calendar-task">
+                      <div class="calendar-task__top">
+                        <span class="pill">{{ task.priority }}</span>
+                        <span>{{ task.status }}</span>
+                      </div>
+                      <strong>{{ task.title }}</strong>
+                      <small>{{ task.projectName || 'Sem projeto' }}</small>
+                    </div>
+                  }
+
+                  @if (cell.tasks.length > 3) {
+                    <div class="calendar-task calendar-task--more">
+                      +{{ cell.tasks.length - 3 }} tarefa(s) adicionais
+                    </div>
+                  }
+                </div>
+              </article>
+            }
+          </div>
+        </div>
+      }
+    </article>
+
+    <div class="calendar-side">
+      <article class="surface-card">
+        <div class="surface-head">
+          <div>
+            <p class="eyebrow">Proximos prazos</p>
+            <h2>Agenda critica</h2>
+          </div>
+        </div>
+
+        @if (upcomingTasks().length) {
+          <div class="stack-list">
+            @for (task of upcomingTasks(); track task.id) {
+              <div class="stack-row">
+                <strong>{{ task.title }}</strong>
+                <span>{{ formatTaskDate(task.dueDate) }} · {{ task.projectName || 'Sem projeto' }}</span>
+                <span>{{ task.responsibleUser?.name || 'Sem responsavel' }} · {{ task.status }}</span>
+              </div>
+            }
+          </div>
+        } @else {
+          <div class="empty-inline">Nenhuma tarefa futura com prazo definido.</div>
+        }
+      </article>
+
+      <article class="surface-card">
+        <div class="surface-head">
+          <div>
+            <p class="eyebrow">Sem prazo</p>
+            <h2>Itens para planejar</h2>
+          </div>
+        </div>
+
+        @if (unscheduledTasks().length) {
+          <div class="stack-list">
+            @for (task of unscheduledTasks(); track task.id) {
+              <div class="stack-row">
+                <strong>{{ task.title }}</strong>
+                <span>{{ task.projectName || 'Sem projeto' }} · {{ task.priority }}</span>
+                <span>{{ task.responsibleUser?.name || 'Sem responsavel' }}</span>
+              </div>
+            }
+          </div>
+        } @else {
+          <div class="empty-inline">Todas as tarefas visiveis para voce ja tem data.</div>
+        }
+      </article>
+
+      <article class="surface-card">
+        <div class="surface-head">
+          <div>
+            <p class="eyebrow">Datas com carga</p>
+            <h2>Resumo rapido</h2>
+          </div>
+        </div>
+
+        @if (scheduledTasks().length) {
+          <div class="stack-list">
+            @for (task of scheduledTasks().slice(0, 5); track task.id) {
+              <div class="stack-row">
+                <strong>{{ formatFullDate(task.dueDate!) }}</strong>
+                <span>{{ task.title }}</span>
+              </div>
+            }
+          </div>
+        } @else {
+          <div class="empty-inline">Defina prazos nas tarefas para ocupar o calendario.</div>
+        }
+      </article>
+    </div>
+  </div>
+</section>

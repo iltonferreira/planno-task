@@ -1,0 +1,303 @@
+<section class="page-shell">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">Agenda pessoal</p>
+      <h1>Calendario integrado</h1>
+      <p class="page-copy">
+        Reuna as suas tarefas do Planno com o seu Google Calendar em uma unica leitura mensal,
+        com importacao e sincronizacao sob demanda.
+      </p>
+    </div>
+
+    <div class="calendar-header-actions">
+      <a class="ghost-button" routerLink="/tasks">Abrir Kanban</a>
+      <span class="pill">{{ authStore.user()?.name || 'Minha agenda' }}</span>
+    </div>
+  </header>
+
+  <div class="metric-grid metric-grid--calendar">
+    <article class="metric-card">
+      <span>Tarefas relacionadas</span>
+      <strong>{{ monthSummary().totalTasks }}</strong>
+      <small>Responsabilidade direta, participacao ou autoria no workspace.</small>
+    </article>
+
+    <article class="metric-card">
+      <span>Tarefas agendadas</span>
+      <strong>{{ monthSummary().scheduledTasks }}</strong>
+      <small>Itens internos com data ou horario na grade mensal.</small>
+    </article>
+
+    <article class="metric-card">
+      <span>Eventos Google no mes</span>
+      <strong>{{ monthSummary().googleEvents }}</strong>
+      <small>Leitura puxada do calendario conectado do usuario.</small>
+    </article>
+
+    <article class="metric-card">
+      <span>Tarefas sincronizadas</span>
+      <strong>{{ monthSummary().syncedTasks }}</strong>
+      <small>Cards que ja ganharam espelho no Google Calendar.</small>
+    </article>
+  </div>
+
+  <article class="surface-card">
+    <div class="surface-head">
+      <div>
+        <p class="eyebrow">Integracao</p>
+        <h2>Google Calendar OAuth</h2>
+      </div>
+      @if (googleCalendarStore.status()?.connected) {
+        <span class="pill pill--success">Conectado</span>
+      } @else if (googleCalendarStore.status()?.configured) {
+        <span class="pill pill--soft">Pronto para conectar</span>
+      } @else {
+        <span class="pill pill--danger">Backend nao configurado</span>
+      }
+    </div>
+
+    <div class="stack-list">
+      <div class="stack-row stack-row--stretch">
+        <div>
+          <strong>
+            @if (googleCalendarStore.status()?.connected) {
+              {{ googleCalendarStore.status()?.googleAccountEmail }}
+            } @else {
+              Nenhuma agenda Google conectada
+            }
+          </strong>
+          <span>
+            @if (googleCalendarStore.status()?.connected) {
+              Eventos do calendario {{ googleCalendarStore.status()?.defaultCalendarId || 'primary' }} serao mostrados aqui e podem virar tarefas no Planno.
+            } @else if (googleCalendarStore.status()?.configured) {
+              Conecte sua conta para ver eventos do Google e publicar tarefas da plataforma na sua agenda.
+            } @else {
+              Faltam GOOGLE_CALENDAR_CLIENT_ID, GOOGLE_CALENDAR_CLIENT_SECRET e GOOGLE_CALENDAR_REDIRECT_URI no backend.
+            }
+          </span>
+        </div>
+
+        <div class="calendar-header-actions">
+          @if (!googleCalendarStore.status()?.connected && googleCalendarStore.status()?.configured) {
+            <button
+              class="primary-button"
+              type="button"
+              (click)="connectGoogleCalendar()"
+              [disabled]="googleCalendarStore.busy()"
+            >
+              {{ googleCalendarStore.busy() ? 'Abrindo...' : 'Conectar Google Calendar' }}
+            </button>
+          }
+
+          @if (googleCalendarStore.status()?.connected) {
+            <button
+              class="ghost-button"
+              type="button"
+              (click)="disconnectGoogleCalendar()"
+              [disabled]="googleCalendarStore.busy()"
+            >
+              {{ googleCalendarStore.busy() ? 'Desconectando...' : 'Desconectar' }}
+            </button>
+          }
+        </div>
+      </div>
+
+      @if (googleCalendarStore.error()) {
+        <div class="empty-inline">{{ googleCalendarStore.error() }}</div>
+      }
+    </div>
+  </article>
+
+  <div class="section-grid section-grid--calendar">
+    <article class="surface-card calendar-surface">
+      <div class="surface-head calendar-surface__head">
+        <div>
+          <p class="eyebrow">Mes em foco</p>
+          <h2>{{ monthLabel() }}</h2>
+        </div>
+
+        <div class="calendar-toolbar">
+          <button class="ghost-button" type="button" (click)="goToPreviousMonth()">Mes anterior</button>
+          <button class="ghost-button" type="button" (click)="goToCurrentMonth()">Hoje</button>
+          <button class="ghost-button" type="button" (click)="goToNextMonth()">Proximo mes</button>
+        </div>
+      </div>
+
+      @if (tasksStore.mineError()) {
+        <div class="inline-error">{{ tasksStore.mineError() }}</div>
+      } @else if (tasksStore.mineLoading() || googleCalendarStore.loadingEvents()) {
+        <div class="empty-inline">Carregando sua agenda integrada...</div>
+      } @else {
+        <div class="calendar-scroll">
+          <div class="calendar-grid">
+            @for (label of weekDays; track label) {
+              <div class="calendar-grid__weekday">{{ label }}</div>
+            }
+
+            @for (cell of calendarCells(); track trackCell($index, cell)) {
+              <article
+                class="calendar-day"
+                [class.is-outside]="!cell.inCurrentMonth"
+                [class.is-today]="cell.isToday"
+              >
+                <div class="calendar-day__top">
+                  <strong>{{ cell.dayNumber }}</strong>
+                  @if (cell.tasks.length || cell.googleEvents.length) {
+                    <span>{{ cell.tasks.length + cell.googleEvents.length }} item(ns)</span>
+                  }
+                </div>
+
+                <div class="calendar-day__stack">
+                  @for (task of cell.tasks.slice(0, 2); track task.id) {
+                    <div class="calendar-task">
+                      <div class="calendar-task__top">
+                        <span class="pill">{{ task.priority }}</span>
+                        <span>{{ task.status }}</span>
+                      </div>
+                      <strong>{{ task.title }}</strong>
+                      <small>{{ task.projectName || 'Sem projeto' }}</small>
+                    </div>
+                  }
+
+                  @for (event of cell.googleEvents.slice(0, 2); track event.eventId) {
+                    <div class="calendar-task calendar-task--google">
+                      <div class="calendar-task__top">
+                        <span class="pill pill--soft">Google</span>
+                        <span>{{ event.allDay ? 'Dia todo' : 'Com hora' }}</span>
+                      </div>
+                      <strong>{{ event.summary }}</strong>
+                      <small>
+                        @if (event.linkedTaskId) {
+                          Vinculado a tarefa #{{ event.linkedTaskId }}
+                        } @else {
+                          Evento externo
+                        }
+                      </small>
+                    </div>
+                  }
+
+                  @if (cell.tasks.length + cell.googleEvents.length > 4) {
+                    <div class="calendar-task calendar-task--more">
+                      +{{ cell.tasks.length + cell.googleEvents.length - 4 }} item(ns) adicionais
+                    </div>
+                  }
+                </div>
+              </article>
+            }
+          </div>
+        </div>
+      }
+    </article>
+
+    <div class="calendar-side">
+      <article class="surface-card">
+        <div class="surface-head">
+          <div>
+            <p class="eyebrow">Proximos prazos</p>
+            <h2>Tarefas para publicar</h2>
+          </div>
+        </div>
+
+        @if (upcomingTasks().length) {
+          <div class="stack-list">
+            @for (task of upcomingTasks(); track task.id) {
+              <div class="stack-row stack-row--stretch">
+                <div>
+                  <strong>{{ task.title }}</strong>
+                  <span>{{ formatTaskDate(task) }} · {{ task.projectName || 'Sem projeto' }}</span>
+                  <span>{{ task.responsibleUser?.name || 'Sem responsavel' }} · {{ task.status }}</span>
+                </div>
+                <div class="stack-actions">
+                  @if (linkedTaskIds().has(task.id)) {
+                    <span class="pill pill--soft">Sincronizada</span>
+                  }
+                  <button
+                    class="tag-button"
+                    type="button"
+                    (click)="syncTask(task.id)"
+                    [disabled]="googleCalendarStore.busy() || !googleCalendarStore.status()?.connected"
+                  >
+                    {{ linkedTaskIds().has(task.id) ? 'Atualizar agenda' : 'Enviar ao Google' }}
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        } @else {
+          <div class="empty-inline">Nenhuma tarefa futura com data ou horario para sincronizar.</div>
+        }
+      </article>
+
+      <article class="surface-card">
+        <div class="surface-head">
+          <div>
+            <p class="eyebrow">Google Agenda</p>
+            <h2>Eventos externos</h2>
+          </div>
+        </div>
+
+        @if (upcomingGoogleEvents().length) {
+          <div class="stack-list">
+            @for (event of upcomingGoogleEvents(); track event.eventId) {
+              <div class="stack-row stack-row--stretch">
+                <div>
+                  <strong>{{ event.summary }}</strong>
+                  <span>{{ formatGoogleEventDate(event) }} · {{ event.allDay ? 'Dia todo' : 'Com horario' }}</span>
+                  <span>{{ event.linkedTaskId ? 'Ja vinculado no Planno' : 'Disponivel para importar' }}</span>
+                </div>
+                <div class="stack-actions">
+                  @if (event.htmlLink) {
+                    <a class="tag-button" [href]="event.htmlLink" target="_blank" rel="noreferrer">
+                      Abrir no Google
+                    </a>
+                  }
+                  @if (!event.linkedTaskId) {
+                    <button
+                      class="tag-button"
+                      type="button"
+                      (click)="importEvent(event.calendarId, event.eventId)"
+                      [disabled]="googleCalendarStore.busy()"
+                    >
+                      Importar como tarefa
+                    </button>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        } @else {
+          <div class="empty-inline">Nenhum evento do Google Calendar carregado para este recorte.</div>
+        }
+      </article>
+
+      <article class="surface-card">
+        <div class="surface-head">
+          <div>
+            <p class="eyebrow">Sem prazo</p>
+            <h2>Itens para planejar</h2>
+          </div>
+        </div>
+
+        @if (unscheduledTasks().length || externalOnlyEvents().length) {
+          <div class="stack-list">
+            @for (task of unscheduledTasks().slice(0, 4); track task.id) {
+              <div class="stack-row">
+                <strong>{{ task.title }}</strong>
+                <span>{{ task.projectName || 'Sem projeto' }} · {{ task.priority }}</span>
+              </div>
+            }
+
+            @for (event of externalOnlyEvents().slice(0, 3); track event.eventId) {
+              <div class="stack-row">
+                <strong>{{ event.summary }}</strong>
+                <span>Evento Google ainda nao importado</span>
+              </div>
+            }
+          </div>
+        } @else {
+          <div class="empty-inline">Tudo o que aparece para voce ja esta agendado ou sincronizado.</div>
+        }
+      </article>
+    </div>
+  </div>
+</section>

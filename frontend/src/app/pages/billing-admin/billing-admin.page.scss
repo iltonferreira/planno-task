@@ -1,0 +1,38 @@
+:host {
+  display: block;
+}
+
+.subscription-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: flex-end;
+  color: var(--text-soft);
+}
+
+.payment-link-card {
+  display: grid;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  padding: 1rem 1.05rem;
+  border-radius: 18px;
+  background: var(--surface-subtle);
+  border: 1px solid var(--surface-stroke);
+}
+
+.payment-link-card strong,
+.payment-link-card span {
+  display: block;
+}
+
+.payment-link-card span {
+  color: var(--text-soft);
+}
+
+.inline-link {
+  display: inline-flex;
+  width: fit-content;
+  color: var(--accent-blue-deep);
+  text-decoration: none;
+  font-weight: 600;
+}

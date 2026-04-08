@@ -1,0 +1,61 @@
+﻿@if (authStore.modalOpen()) {
+  <div class="modal-backdrop" (click)="authStore.close()"></div>
+
+  <section class="auth-modal">
+    <div class="auth-modal__hero">
+      <div class="auth-modal__brand">
+        <span class="auth-modal__brand-mark">
+          <img src="planno-logo.png" alt="Planno logo" />
+        </span>
+        <div>
+          <p class="eyebrow">Planno</p>
+          <h2>Seu workspace operacional com leitura mais limpa</h2>
+        </div>
+      </div>
+      <p class="auth-modal__lead">
+        Entre para organizar clientes, projetos, tarefas, assinaturas, documentos e pagamentos em um
+        fluxo mais calmo e direto.
+      </p>
+      <div class="auth-modal__highlights">
+        <span>Clientes e projetos</span>
+        <span>Kanban e documentos</span>
+        <span>Receita recorrente</span>
+      </div>
+    </div>
+
+    <div class="auth-modal__panel" (click)="$event.stopPropagation()">
+      <div class="auth-modal__top">
+        <div>
+          <p class="eyebrow">Acesso</p>
+          <h3>Entrar no workspace</h3>
+        </div>
+        <button class="ghost-button" type="button" (click)="authStore.close()">Fechar</button>
+      </div>
+
+      <form class="form-grid" [formGroup]="loginForm" (ngSubmit)="submitLogin()">
+        <label class="field field--full">
+          <span>Email</span>
+          <input type="email" formControlName="email" placeholder="voce@empresa.com" />
+        </label>
+
+        <label class="field field--full">
+          <span>Senha</span>
+          <input type="password" formControlName="password" placeholder="********" />
+        </label>
+
+        <button class="primary-button" type="submit" [disabled]="authStore.submitting()">
+          {{ authStore.submitting() ? 'Entrando...' : 'Entrar' }}
+        </button>
+      </form>
+
+      <p class="auth-modal__access-note">
+        O acesso e a assinatura do workspace sao provisionados manualmente pela equipe Planno antes
+        do login da sua empresa.
+      </p>
+
+      @if (authStore.error()) {
+        <div class="inline-error">{{ authStore.error() }}</div>
+      }
+    </div>
+  </section>
+}

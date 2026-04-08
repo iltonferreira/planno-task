@@ -1,0 +1,98 @@
+<section class="page-shell">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">Knowledge</p>
+      <h1>Base de conhecimento</h1>
+      <p class="page-copy">Playbooks, SOPs e contexto operacional versionados no backend, com editor simples e busca por titulo ou conteudo.</p>
+    </div>
+    <span class="pill pill--soft">{{ knowledgeBaseStore.items().length }} paginas</span>
+  </header>
+
+  <div class="section-grid section-grid--two">
+    <article class="surface-card">
+      <div class="surface-head">
+        <div>
+          <p class="eyebrow">Biblioteca</p>
+          <h2>Paginas salvas</h2>
+        </div>
+        <button class="ghost-button" type="button" (click)="createNew()">Nova pagina</button>
+      </div>
+
+      @if (knowledgeBaseStore.items().length) {
+        <div class="stack-list">
+          @for (page of knowledgeBaseStore.items(); track page.id) {
+            <div class="stack-row stack-row--stretch">
+              <div>
+                <strong>{{ page.title }}</strong>
+                <span>{{ page.wordCount }} palavras · {{ page.slug }}</span>
+              </div>
+              <div class="row-actions">
+                <button class="tag-button" type="button" (click)="selectPage(page.id)">Editar</button>
+                <button class="tag-button" type="button" (click)="remove(page.id)">Excluir</button>
+              </div>
+            </div>
+          }
+        </div>
+      } @else {
+        <div class="stack-list">
+          @for (template of noteTemplates; track template) {
+            <div class="stack-row">
+              <strong>{{ template }}</strong>
+              <span>Pronto para virar documento versionado</span>
+            </div>
+          }
+        </div>
+      }
+    </article>
+
+    <article class="surface-card">
+      <div class="surface-head">
+        <div>
+          <p class="eyebrow">Editor</p>
+          <h2>{{ selectedPage()?.title || 'Draft de conhecimento' }}</h2>
+        </div>
+      </div>
+
+      <form class="form-grid" [formGroup]="form" (ngSubmit)="submit()">
+        <label class="field field--full">
+          <span>Titulo</span>
+          <input type="text" formControlName="title" />
+        </label>
+
+        <label class="field field--full">
+          <span>Resumo</span>
+          <textarea rows="3" formControlName="summary"></textarea>
+        </label>
+
+        <label class="field-checkbox field--full">
+          <input type="checkbox" formControlName="pinned" />
+          <span>Fixar no topo da base</span>
+        </label>
+
+        <label class="field field--full">
+          <span>Conteudo</span>
+          <textarea rows="10" formControlName="body"></textarea>
+        </label>
+
+        <button class="primary-button" type="submit" [disabled]="knowledgeBaseStore.saving()">
+          {{ knowledgeBaseStore.saving() ? 'Salvando...' : (selectedPageId() ? 'Atualizar pagina' : 'Criar pagina') }}
+        </button>
+      </form>
+
+      @if (knowledgeBaseStore.error()) {
+        <div class="inline-error">{{ knowledgeBaseStore.error() }}</div>
+      }
+    </article>
+  </div>
+
+  <article class="surface-card note-preview">
+    <div class="surface-head">
+      <div>
+        <p class="eyebrow">Preview</p>
+        <h2>{{ form.controls.title.value }}</h2>
+      </div>
+    </div>
+
+    <pre>{{ form.controls.body.value }}</pre>
+  </article>
+</section>

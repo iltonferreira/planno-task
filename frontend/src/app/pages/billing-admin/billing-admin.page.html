@@ -1,0 +1,179 @@
+@if (billingAdminAccess()) {
+  <section class="page-shell">
+    <header class="page-header">
+      <div>
+        <p class="eyebrow">Mercado Pago Admin</p>
+        <h1>Receitas da conta Mercado Pago</h1>
+        <p class="page-copy">
+          Painel privado da equipe do sistema para acompanhar as receitas da sua conta Mercado Pago,
+          ver os tenants clientes e gerar cobrancas avulsas quando precisar.
+        </p>
+      </div>
+      <span class="pill pill--soft">
+        {{ overview()?.mercadoPagoActiveSubscriptionCount ?? 0 }} assinaturas MP ativas
+      </span>
+    </header>
+
+    <div class="metric-grid">
+      <article class="metric-card">
+        <span>Clientes SaaS</span>
+        <strong>{{ overview()?.totalCustomers ?? 0 }}</strong>
+        <small>Tenants clientes vinculados ao produto</small>
+      </article>
+      <article class="metric-card">
+        <span>Assinaturas ativas</span>
+        <strong>{{ overview()?.activeCustomers ?? 0 }}</strong>
+        <small>Clientes com cobranca recorrente ativa no SaaS</small>
+      </article>
+      <article class="metric-card">
+        <span>Receita recorrente ativa</span>
+        <strong>{{ projectedRevenue() | currency:'BRL':'symbol':'1.2-2' }}</strong>
+        <small>Previsao local dos clientes ativos do produto</small>
+      </article>
+      <article class="metric-card">
+        <span>Receita ativa no MP</span>
+        <strong>{{ mercadoPagoRevenue() | currency:'BRL':'symbol':'1.2-2' }}</strong>
+        <small>Assinaturas autorizadas ou ativas na sua conta Mercado Pago</small>
+      </article>
+    </div>
+
+    <div class="section-grid section-grid--two">
+      <article class="surface-card">
+        <div class="surface-head">
+          <div>
+            <p class="eyebrow">Cobranca avulsa</p>
+            <h2>Gerar link de pagamento</h2>
+          </div>
+          <span class="pill pill--soft">{{ pendingRevenue() | currency:'BRL':'symbol':'1.2-2' }} pendente</span>
+        </div>
+
+        <form class="form-grid" [formGroup]="form" (ngSubmit)="submit()">
+          <label class="field field--full">
+            <span>Cliente SaaS</span>
+            <select formControlName="tenantId" (change)="syncTenantContext()">
+              <option [value]="0">Escolher manualmente</option>
+              @for (customer of customers(); track customer.tenantId) {
+                <option [value]="customer.tenantId">{{ customer.tenantName }}</option>
+              }
+            </select>
+          </label>
+
+          <label class="field field--full">
+            <span>Titulo</span>
+            <input type="text" formControlName="title" placeholder="Cobranca avulsa do Planno" />
+          </label>
+
+          <label class="field field--full">
+            <span>Descricao</span>
+            <textarea
+              rows="3"
+              formControlName="description"
+              placeholder="Ex.: setup, diferenca de plano ou cobranca pontual"
+            ></textarea>
+          </label>
+
+          <label class="field">
+            <span>Email do pagador</span>
+            <input type="email" formControlName="payerEmail" placeholder="financeiro@cliente.com" />
+          </label>
+
+          <label class="field">
+            <span>Valor</span>
+            <input type="number" min="0.01" step="0.01" formControlName="amount" />
+          </label>
+
+          <button class="primary-button" type="submit" [disabled]="adminStore.generatingLink()">
+            {{ adminStore.generatingLink() ? 'Gerando...' : 'Gerar link Mercado Pago' }}
+          </button>
+        </form>
+
+        @if (adminStore.lastPaymentLink(); as link) {
+          <div class="payment-link-card">
+            <strong>Link gerado com sucesso</strong>
+            <span>{{ link.externalReference }}</span>
+            @if (link.checkoutUrl) {
+              <a class="inline-link" [href]="link.checkoutUrl" target="_blank" rel="noopener">
+                Abrir checkout avulso
+              </a>
+            }
+          </div>
+        }
+
+        @if (adminStore.error()) {
+          <div class="inline-error">{{ adminStore.error() }}</div>
+        }
+      </article>
+
+      <article class="surface-card">
+        <div class="surface-head">
+          <div>
+            <p class="eyebrow">Clientes do produto</p>
+            <h2>Status do SaaS por tenant</h2>
+          </div>
+        </div>
+
+        @if (customers().length) {
+          <div class="stack-list">
+            @for (customer of customers(); track customer.tenantId) {
+              <div class="stack-row stack-row--stretch">
+                <div>
+                  <strong>{{ customer.tenantName }}</strong>
+                  <span>{{ customer.status }} - {{ customer.amount | currency:'BRL':'symbol':'1.2-2' }}</span>
+                  <span>{{ customer.payerEmail || 'Email pagador nao informado' }}</span>
+                  @if (customer.nextBillingDate) {
+                    <span>Proxima cobranca em {{ customer.nextBillingDate | date:'dd/MM/yyyy' }}</span>
+                  }
+                </div>
+                <div class="subscription-meta">
+                  <span>{{ customer.tenantSlug }}</span>
+                  <span>{{ customer.tenantActive ? 'Tenant ativo' : 'Tenant inativo' }}</span>
+                </div>
+              </div>
+            }
+          </div>
+        } @else {
+          <div class="empty-inline">Ainda nao existem clientes SaaS vinculados ao billing da plataforma.</div>
+        }
+      </article>
+    </div>
+
+    <article class="surface-card">
+      <div class="surface-head">
+        <div>
+          <p class="eyebrow">Mercado Pago</p>
+          <h2>Todas as assinaturas da conta</h2>
+        </div>
+      </div>
+
+      @if (mercadoPagoSubscriptions().length) {
+        <div class="stack-list">
+          @for (subscription of mercadoPagoSubscriptions(); track subscription.id) {
+            <div class="stack-row stack-row--stretch">
+              <div>
+                <strong>{{ subscription.reason || 'Assinatura sem descricao' }}</strong>
+                <span>{{ subscription.status || 'Sem status' }} - {{ (subscription.amount ?? 0) | currency:'BRL':'symbol':'1.2-2' }}</span>
+                <span>{{ subscription.payerEmail || 'Sem email vinculado' }}</span>
+                @if (subscription.linkedTenantName) {
+                  <span>Cliente SaaS vinculado: {{ subscription.linkedTenantName }}</span>
+                }
+              </div>
+
+              <div class="subscription-meta">
+                @if (subscription.nextPaymentDate) {
+                  <span>{{ subscription.nextPaymentDate | date:'dd/MM/yyyy' }}</span>
+                }
+                @if (subscription.initPoint) {
+                  <a class="inline-link" [href]="subscription.initPoint" target="_blank" rel="noopener">
+                    Abrir no MP
+                  </a>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      } @else {
+        <div class="empty-inline">Nenhuma assinatura foi encontrada na sua conta Mercado Pago.</div>
+      }
+    </article>
+  </section>
+}

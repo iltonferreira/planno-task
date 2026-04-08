@@ -1,0 +1,57 @@
+﻿:host {
+  display: block;
+}
+
+.chart-bars {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(88px, 1fr));
+  gap: 1rem;
+  min-height: 220px;
+  align-items: end;
+}
+
+.chart-column {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  align-items: center;
+  justify-content: end;
+  height: 220px;
+}
+
+.chart-bar {
+  width: 100%;
+  max-width: 72px;
+  border-radius: 18px 18px 8px 8px;
+  background: linear-gradient(180deg, var(--accent-blue), var(--accent-blue-deep));
+  box-shadow: 0 14px 24px rgba(var(--accent-rgb), 0.16);
+  min-height: 8px;
+}
+
+.chart-column strong,
+.chart-column span {
+  text-align: center;
+}
+
+.metric-mini-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.mini-metric {
+  padding: 1rem 1.15rem;
+  border: 1px solid var(--line-soft);
+  border-radius: 20px;
+  background: var(--field-checkbox-background);
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+@media (max-width: 720px) {
+  .metric-mini-grid {
+    grid-template-columns: 1fr;
+  }
+}

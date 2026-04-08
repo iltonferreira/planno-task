@@ -1,0 +1,157 @@
+﻿<section class="page-shell">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">Payments</p>
+      <h1>Contas a pagar e recebiveis</h1>
+      <p class="page-copy">
+        Cadastre recebiveis, contas a pagar e movimentacoes financeiras da operacao do tenant. Esse
+        modulo continua disponivel para todos os clientes.
+      </p>
+    </div>
+    <span class="pill pill--soft">{{ paymentsStore.items().length }} lancamentos</span>
+  </header>
+
+  <div class="metric-grid">
+    <article class="metric-card">
+      <span>Recebiveis aprovados</span>
+      <strong>{{ paymentsStore.income() | currency:'BRL':'symbol':'1.0-0' }}</strong>
+      <small>Entradas confirmadas no tenant atual</small>
+    </article>
+    <article class="metric-card">
+      <span>Contas pagas</span>
+      <strong>{{ paymentsStore.expenses() | currency:'BRL':'symbol':'1.0-0' }}</strong>
+      <small>Contas a pagar e despesas operacionais</small>
+    </article>
+    <article class="metric-card">
+      <span>Saldo liquido</span>
+      <strong>{{ net() | currency:'BRL':'symbol':'1.0-0' }}</strong>
+      <small>Entradas menos saidas aprovadas</small>
+    </article>
+    <article class="metric-card">
+      <span>Pendentes</span>
+      <strong>{{ pendingCount() }}</strong>
+      <small>Lancamentos aguardando aprovacao ou baixa</small>
+    </article>
+  </div>
+
+  <div class="section-grid section-grid--two">
+    <article class="surface-card">
+      <div class="surface-head">
+        <div>
+          <p class="eyebrow">Nova conta</p>
+          <h2>Criar recebivel ou conta a pagar</h2>
+        </div>
+      </div>
+
+      <form class="form-grid" [formGroup]="form" (ngSubmit)="submit()">
+        <label class="field field--full">
+          <span>Titulo</span>
+          <input type="text" formControlName="title" placeholder="Setup inicial do projeto" />
+        </label>
+
+        <label class="field field--full">
+          <span>Descricao</span>
+          <textarea
+            rows="3"
+            formControlName="description"
+            placeholder="Observacoes financeiras, taxa, etapa ou recorrencia"
+          ></textarea>
+        </label>
+
+        <label class="field">
+          <span>Valor</span>
+          <input type="number" min="0.01" step="0.01" formControlName="amount" />
+        </label>
+
+        <label class="field">
+          <span>Tipo</span>
+          <select formControlName="type">
+            <option value="ONE_TIME">Avulso</option>
+            <option value="SUBSCRIPTION">Recorrente</option>
+          </select>
+        </label>
+
+        <label class="field">
+          <span>Direcao</span>
+          <select formControlName="direction">
+            <option value="INCOME">Recebivel</option>
+            <option value="EXPENSE">Conta a pagar</option>
+          </select>
+        </label>
+
+        <label class="field">
+          <span>Cliente</span>
+          <select formControlName="clientId">
+            <option [value]="0">Sem cliente</option>
+            @for (client of clientsStore.items(); track client.id) {
+              <option [value]="client.id">{{ client.name }}</option>
+            }
+          </select>
+        </label>
+
+        <label class="field">
+          <span>Projeto</span>
+          <select formControlName="projectId">
+            <option [value]="0">Sem projeto</option>
+            @for (project of projectsStore.items(); track project.id) {
+              <option [value]="project.id">{{ project.name }}</option>
+            }
+          </select>
+        </label>
+
+        <label class="field field--full">
+          <span>Vencimento</span>
+          <input type="date" formControlName="dueDate" />
+        </label>
+
+        <button class="primary-button" type="submit" [disabled]="paymentsStore.saving()">
+          {{ paymentsStore.saving() ? 'Salvando...' : 'Salvar conta' }}
+        </button>
+      </form>
+
+      @if (paymentsStore.error()) {
+        <div class="inline-error">{{ paymentsStore.error() }}</div>
+      }
+    </article>
+
+    <article class="surface-card">
+      <div class="surface-head">
+        <div>
+          <p class="eyebrow">Lancamentos recentes</p>
+          <h2>Baixa e acompanhamento</h2>
+        </div>
+      </div>
+
+      @if (highlightedPayments().length) {
+        <div class="stack-list">
+          @for (payment of highlightedPayments(); track payment.id) {
+            <div class="stack-row stack-row--stretch">
+              <div>
+                <strong>{{ payment.title }}</strong>
+                <span>{{ payment.direction }} · {{ payment.provider }} · {{ payment.amount | currency:'BRL':'symbol':'1.0-0' }}</span>
+                @if (payment.clientName || payment.projectName) {
+                  <span>{{ payment.clientName || 'Sem cliente' }} · {{ payment.projectName || 'Sem projeto' }}</span>
+                }
+              </div>
+
+              <div class="status-actions">
+                @for (status of statuses; track status) {
+                  <button
+                    class="tag-button"
+                    type="button"
+                    [class.is-active]="payment.status === status"
+                    (click)="updateStatus(payment.id, status)"
+                  >
+                    {{ status }}
+                  </button>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      } @else {
+        <div class="empty-inline">Nenhum lancamento ainda. Cadastre uma entrada ou uma despesa para comecar.</div>
+      }
+    </article>
+  </div>
+</section>

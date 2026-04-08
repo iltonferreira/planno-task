@@ -1,0 +1,151 @@
+<section class="page-shell">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">Kanban</p>
+      <h1>Tarefas</h1>
+      <p class="page-copy">Controle o quadro, o responsavel principal, os participantes e as mudancas de status em uma interface pronta para operacao diaria.</p>
+    </div>
+    <div class="tasks-header-actions">
+      <a class="ghost-button" routerLink="/calendar">Abrir calendario</a>
+      <button class="ghost-button" type="button" (click)="toggleMineOnly()">
+        {{ showMineOnly() ? 'Mostrar quadro completo' : 'Somente minhas tarefas' }}
+      </button>
+    </div>
+  </header>
+
+  <div class="section-grid section-grid--sidebar">
+    <article class="surface-card">
+      <div class="surface-head">
+        <div>
+          <p class="eyebrow">Nova task</p>
+          <h2>Cadastro e atribuicao</h2>
+        </div>
+      </div>
+
+      <form class="form-grid" [formGroup]="form" (ngSubmit)="submit()">
+        <label class="field field--full">
+          <span>Titulo</span>
+          <input type="text" formControlName="title" placeholder="Revisar contrato e publicar cronograma" />
+        </label>
+
+        <label class="field field--full">
+          <span>Descricao</span>
+          <textarea rows="4" formControlName="description" placeholder="Contexto, checklist e dependencias"></textarea>
+        </label>
+
+        <label class="field">
+          <span>Status</span>
+          <select formControlName="status">
+            @for (status of statuses; track status) {
+              <option [value]="status">{{ status }}</option>
+            }
+          </select>
+        </label>
+
+        <label class="field">
+          <span>Prioridade</span>
+          <select formControlName="priority">
+            @for (priority of priorities; track priority) {
+              <option [value]="priority">{{ priority }}</option>
+            }
+          </select>
+        </label>
+
+        <label class="field">
+          <span>Projeto</span>
+          <select formControlName="projectId">
+            <option [value]="0">Sem projeto</option>
+            @for (project of projectsStore.items(); track project.id) {
+              <option [value]="project.id">{{ project.name }}</option>
+            }
+          </select>
+        </label>
+
+        <label class="field">
+          <span>Responsavel</span>
+          <select formControlName="responsibleUserId">
+            <option [value]="0">Sem responsavel</option>
+            @for (user of usersStore.items(); track user.id) {
+              <option [value]="user.id">{{ user.name }}</option>
+            }
+          </select>
+        </label>
+
+        <label class="field field--full">
+          <span>Prazo</span>
+          <input type="date" formControlName="dueDate" />
+        </label>
+
+        <div class="participant-picker field field--full">
+          <span>Participantes</span>
+          <div class="participant-grid">
+            @for (user of usersStore.items(); track user.id) {
+              <label class="checkbox-tile">
+                <input type="checkbox" [checked]="isParticipantSelected(user.id)" (change)="toggleParticipant(user.id, $event)" />
+                <span>{{ user.name }}</span>
+              </label>
+            }
+          </div>
+        </div>
+
+        <button class="primary-button" type="submit" [disabled]="!authStore.isAuthenticated() || tasksStore.saving()">
+          {{ tasksStore.saving() ? 'Salvando...' : 'Criar tarefa' }}
+        </button>
+      </form>
+
+      @if (tasksStore.error()) {
+        <div class="inline-error">{{ tasksStore.error() }}</div>
+      }
+    </article>
+
+    <div class="kanban-grid">
+      @for (column of columns(); track column.status) {
+        <article
+          class="kanban-column surface-card"
+          (dragover)="$event.preventDefault()"
+          (drop)="dropOn(column.status)"
+        >
+          <div class="surface-head">
+            <div>
+              <p class="eyebrow">{{ column.tasks.length }} cards</p>
+              <h2>{{ column.status }}</h2>
+            </div>
+          </div>
+
+          <div class="kanban-stack">
+            @for (task of column.tasks; track task.id) {
+              <div
+                class="task-card"
+                draggable="true"
+                (dragstart)="startDragging(task)"
+                (dragend)="stopDragging()"
+              >
+                <div class="task-card__top">
+                  <span class="pill">{{ task.priority }}</span>
+                  <span>{{ task.dueDate || 'Sem prazo' }}</span>
+                </div>
+                <strong>{{ task.title }}</strong>
+                <p>{{ task.description || 'Sem descricao.' }}</p>
+                <div class="task-card__meta">
+                  <span>{{ task.projectName || 'Sem projeto' }}</span>
+                  <span>{{ task.responsibleUser?.name || 'Sem responsavel' }}</span>
+                </div>
+                @if (task.participants.length) {
+                  <div class="avatar-row">
+                    @for (participant of task.participants; track participant.id) {
+                      <span class="avatar-chip">{{ participant.name.slice(0, 1) }}</span>
+                    }
+                  </div>
+                }
+              </div>
+            }
+
+            @if (!column.tasks.length) {
+              <div class="empty-inline">Arraste cards para esta coluna.</div>
+            }
+          </div>
+        </article>
+      }
+    </div>
+  </div>
+</section>

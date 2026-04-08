@@ -1,0 +1,27 @@
+﻿:host {
+  display: block;
+}
+
+.row-actions {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.field-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.1rem;
+  border: 1px dashed var(--line-soft);
+  border-radius: 20px;
+  background: var(--field-checkbox-background);
+}
+
+.note-preview pre {
+  margin: 0;
+  white-space: pre-wrap;
+  font-family: 'IBM Plex Mono', monospace;
+  line-height: 1.7;
+}

@@ -1,0 +1,80 @@
+<section class="page-shell">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">CRM</p>
+      <h1>Clientes</h1>
+      <p class="page-copy">Cadastre contatos, acompanhe valor gerado e mantenha a base pronta para projetos, documentos e cobrancas.</p>
+    </div>
+    <span class="pill pill--soft">{{ clientsStore.items().length }} clientes na base</span>
+  </header>
+
+  <div class="section-grid section-grid--two">
+    <article class="surface-card">
+      <div class="surface-head">
+        <div>
+          <p class="eyebrow">Novo cliente</p>
+          <h2>Cadastro rapido</h2>
+        </div>
+      </div>
+
+      <form class="form-grid" [formGroup]="form" (ngSubmit)="submit()">
+        <label class="field">
+          <span>Nome</span>
+          <input type="text" formControlName="name" placeholder="Studio Aurora" />
+        </label>
+
+        <label class="field">
+          <span>Email</span>
+          <input type="email" formControlName="email" placeholder="contato@cliente.com" />
+        </label>
+
+        <label class="field">
+          <span>Telefone</span>
+          <input type="text" formControlName="phone" placeholder="+55 11 99999-9999" />
+        </label>
+
+        <label class="field">
+          <span>Documento</span>
+          <input type="text" formControlName="document" placeholder="CPF ou CNPJ" />
+        </label>
+
+        <button class="primary-button" type="submit" [disabled]="!authStore.isAuthenticated() || clientsStore.saving()">
+          {{ clientsStore.saving() ? 'Salvando...' : 'Salvar cliente' }}
+        </button>
+      </form>
+
+      @if (clientsStore.error()) {
+        <div class="inline-error">{{ clientsStore.error() }}</div>
+      }
+    </article>
+
+    <article class="surface-card">
+      <div class="surface-head">
+        <div>
+          <p class="eyebrow">Pipeline</p>
+          <h2>Base de relacionamento</h2>
+        </div>
+      </div>
+
+      @if (clientsStore.items().length) {
+        <div class="stack-list">
+          @for (client of clientsStore.items(); track client.id) {
+            <div class="stack-row stack-row--spread">
+              <div>
+                <strong>{{ client.name }}</strong>
+                <span>{{ client.email || 'Sem email' }} · {{ client.phone || 'Sem telefone' }}</span>
+              </div>
+              <div class="stack-actions">
+                <span class="pill">{{ client.type }}</span>
+                <strong>{{ client.totalValue | currency:'BRL':'symbol':'1.0-0' }}</strong>
+                <button class="ghost-button" type="button" (click)="remove(client.id)">Arquivar</button>
+              </div>
+            </div>
+          }
+        </div>
+      } @else {
+        <div class="empty-inline">Sua carteira ainda esta vazia. O primeiro cadastro alimenta projetos, assinaturas e documentos.</div>
+      }
+    </article>
+  </div>
+</section>

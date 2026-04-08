@@ -1,0 +1,155 @@
+@if (billingAdminAccess()) {
+  <section class="page-shell">
+    <header class="page-header">
+      <div>
+        <p class="eyebrow">Provisionamento</p>
+        <h1>Clientes SaaS</h1>
+        <p class="page-copy">
+          Crie workspaces para clientes pagantes ou liberados em cortesia. Esse modulo fica
+          restrito a voce e a equipe interna do produto.
+        </p>
+      </div>
+      <span class="pill pill--soft">{{ customers().length }} workspaces provisionados</span>
+    </header>
+
+    <div class="metric-grid">
+      <article class="metric-card">
+        <span>Total de clientes</span>
+        <strong>{{ customers().length }}</strong>
+        <small>Todos os tenants do produto fora da equipe interna</small>
+      </article>
+      <article class="metric-card">
+        <span>Pagantes</span>
+        <strong>{{ paidCount() }}</strong>
+        <small>Clientes que precisam manter assinatura ativa</small>
+      </article>
+      <article class="metric-card">
+        <span>Pagantes ativos</span>
+        <strong>{{ activePaidCount() }}</strong>
+        <small>Workspaces com assinatura liberada no momento</small>
+      </article>
+      <article class="metric-card">
+        <span>Cortesia</span>
+        <strong>{{ complimentaryCount() }}</strong>
+        <small>Workspaces liberados manualmente sem cobranca</small>
+      </article>
+    </div>
+
+    <div class="section-grid section-grid--two">
+      <article class="surface-card">
+        <div class="surface-head">
+          <div>
+            <p class="eyebrow">Novo workspace</p>
+            <h2>Criar cliente do Planno</h2>
+          </div>
+        </div>
+
+        <form class="form-grid" [formGroup]="form" (ngSubmit)="submit()">
+          <label class="field field--full">
+            <span>Nome da empresa</span>
+            <input type="text" formControlName="tenantName" placeholder="Studio Aurora" (blur)="fillSlugFromName()" />
+          </label>
+
+          <label class="field">
+            <span>Slug do workspace</span>
+            <input type="text" formControlName="tenantSlug" placeholder="studio-aurora" />
+          </label>
+
+          <label class="field">
+            <span>CNPJ</span>
+            <input type="text" formControlName="tenantCnpj" placeholder="Opcional" />
+          </label>
+
+          <label class="field">
+            <span>Nome do admin</span>
+            <input type="text" formControlName="adminName" placeholder="Ana Souza" />
+          </label>
+
+          <label class="field">
+            <span>Email do admin</span>
+            <input type="email" formControlName="adminEmail" placeholder="ana@cliente.com" />
+          </label>
+
+          <label class="field">
+            <span>CPF do admin</span>
+            <input type="text" formControlName="adminCpf" placeholder="Somente numeros" />
+          </label>
+
+          <label class="field">
+            <span>Senha inicial</span>
+            <input type="text" formControlName="adminPassword" placeholder="Minimo de 8 caracteres" />
+          </label>
+
+          <label class="field field--full">
+            <span>Modelo de acesso</span>
+            <select formControlName="billingMode">
+              <option value="SUBSCRIPTION_REQUIRED">Cliente pagante</option>
+              <option value="COMPLIMENTARY">Liberar em cortesia</option>
+            </select>
+          </label>
+
+          <button class="primary-button" type="submit" [disabled]="adminStore.provisioning()">
+            {{ adminStore.provisioning() ? 'Provisionando...' : 'Criar workspace' }}
+          </button>
+        </form>
+
+        @if (adminStore.lastProvisionedWorkspace(); as provisioned) {
+          <div class="provision-card">
+            <strong>Workspace criado com sucesso</strong>
+            <span>{{ provisioned.tenantName }} · {{ billingModeLabel(provisioned.billingMode) }}</span>
+            <span>Admin: {{ provisioned.adminEmail }}</span>
+            <span>Status inicial: {{ customerStatusLabel(provisioned.platformStatus) }}</span>
+
+            @if (provisioned.checkoutUrl) {
+              <a class="inline-link" [href]="provisioned.checkoutUrl" target="_blank" rel="noopener">
+                Abrir checkout da assinatura
+              </a>
+            }
+          </div>
+        }
+
+        @if (adminStore.error()) {
+          <div class="inline-error">{{ adminStore.error() }}</div>
+        }
+      </article>
+
+      <article class="surface-card">
+        <div class="surface-head">
+          <div>
+            <p class="eyebrow">Carteira SaaS</p>
+            <h2>Workspaces provisionados</h2>
+          </div>
+        </div>
+
+        @if (customers().length) {
+          <div class="stack-list">
+            @for (customer of customers(); track customer.tenantId) {
+              <div class="stack-row stack-row--stretch">
+                <div>
+                  <strong>{{ customer.tenantName }}</strong>
+                  <span>{{ billingModeLabel(customer.billingMode) }} · {{ customerStatusLabel(customer.status) }}</span>
+                  <span>{{ customer.adminEmail || customer.payerEmail || 'Sem email principal' }}</span>
+                  @if (customer.billingMode === 'SUBSCRIPTION_REQUIRED') {
+                    <span>{{ customer.amount | currency:'BRL':'symbol':'1.2-2' }} por mes</span>
+                  }
+                </div>
+
+                <div class="customer-meta">
+                  <span>{{ customer.tenantSlug }}</span>
+                  <span>{{ customer.tenantActive ? 'Tenant ativo' : 'Tenant inativo' }}</span>
+                  @if (customer.checkoutUrl && customer.status !== 'ACTIVE') {
+                    <a class="inline-link" [href]="customer.checkoutUrl" target="_blank" rel="noopener">
+                      Abrir checkout
+                    </a>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        } @else {
+          <div class="empty-inline">Nenhum cliente SaaS foi provisionado ainda.</div>
+        }
+      </article>
+    </div>
+  </section>
+}

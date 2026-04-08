@@ -1,0 +1,192 @@
+<section class="page-shell">
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">Drive</p>
+      <h1>Documentos</h1>
+      <p class="page-copy">Upload, download e metadata centralizados no Google Drive, sem armazenamento local no backend.</p>
+    </div>
+    <span class="pill pill--soft">{{ documentsStore.items().length }} arquivos</span>
+  </header>
+
+  <article class="surface-card">
+    <div class="surface-head">
+      <div>
+        <p class="eyebrow">Integracao</p>
+        <h2>Google Drive OAuth</h2>
+      </div>
+      @if (driveStatus()?.connected) {
+        <span class="pill pill--success">Conectado</span>
+      } @else if (driveStatus()?.configured) {
+        <span class="pill pill--soft">Pronto para conectar</span>
+      } @else {
+        <span class="pill pill--danger">Backend nao configurado</span>
+      }
+    </div>
+
+    <div class="stack-list">
+      <div class="stack-row stack-row--stretch">
+        <div>
+          <strong>
+            @if (driveStatus()?.connected) {
+              {{ driveStatus()?.googleAccountEmail }}
+            } @else {
+              Conta Google nao conectada
+            }
+          </strong>
+          <span>
+            @if (driveStatus()?.connected) {
+              A aplicacao vai operar no seu Drive com escopo total e criar a estrutura automaticamente a partir da raiz {{ driveStatus()?.rootFolderId || 'root' }}.
+            } @else if (driveStatus()?.configured) {
+              O backend ja esta pronto para abrir o consentimento OAuth e conectar sua conta Google.
+            } @else {
+              Faltam GOOGLE_DRIVE_CLIENT_ID, GOOGLE_DRIVE_CLIENT_SECRET e GOOGLE_DRIVE_REDIRECT_URI no backend.
+            }
+          </span>
+        </div>
+
+        <div class="row-actions">
+          @if (!driveStatus()?.connected && driveStatus()?.configured) {
+            <button class="primary-button" type="button" (click)="connectDrive()" [disabled]="documentsStore.integrationBusy()">
+              {{ documentsStore.integrationBusy() ? 'Abrindo...' : 'Conectar Google Drive' }}
+            </button>
+          }
+
+          @if (driveStatus()?.connected) {
+            <button class="ghost-button" type="button" (click)="disconnectDrive()" [disabled]="documentsStore.integrationBusy()">
+              {{ documentsStore.integrationBusy() ? 'Desconectando...' : 'Desconectar' }}
+            </button>
+          }
+        </div>
+      </div>
+
+      @if (documentsStore.integrationError()) {
+        <div class="empty-inline">{{ documentsStore.integrationError() }}</div>
+      }
+    </div>
+  </article>
+
+  <div class="section-grid section-grid--two">
+    <article
+      class="surface-card upload-dropzone"
+      (dragover)="preventDefault($event)"
+      (drop)="handleDrop($event)"
+    >
+      <div class="surface-head">
+        <div>
+          <p class="eyebrow">Fila de upload</p>
+          <h2>Solte arquivos aqui</h2>
+        </div>
+      </div>
+
+      <form class="form-grid" [formGroup]="form">
+        <label class="field">
+          <span>Relacao</span>
+          <select formControlName="relationType" (change)="updateRelationType(form.controls.relationType.value)">
+            <option value="CLIENT">Cliente</option>
+            <option value="PROJECT">Projeto</option>
+            <option value="FINANCE">Financeiro</option>
+            <option value="KNOWLEDGE_BASE">Knowledge base</option>
+            <option value="GENERAL">Geral</option>
+          </select>
+        </label>
+
+        @if (['CLIENT', 'PROJECT', 'KNOWLEDGE_BASE'].includes(relationType())) {
+          <label class="field">
+            <span>Item relacionado</span>
+            <select formControlName="relationId">
+              <option [value]="0">Selecione</option>
+              @for (item of availableRelations(); track item.id) {
+                <option [value]="item.id">{{ item.label }}</option>
+              }
+            </select>
+          </label>
+        }
+      </form>
+
+      <p class="page-copy">A pasta de destino e criada automaticamente conforme a relacao escolhida.</p>
+      <label class="primary-button upload-button">
+        Selecionar arquivos
+        <input type="file" multiple hidden (change)="handleFileInput($event)" />
+      </label>
+      <button
+        class="ghost-button"
+        type="button"
+        (click)="uploadQueued()"
+        [disabled]="!queuedFiles().length || documentsStore.uploading() || !driveStatus()?.connected"
+      >
+        {{ documentsStore.uploading() ? 'Enviando...' : 'Enviar fila' }}
+      </button>
+    </article>
+
+    <article class="surface-card">
+      <div class="surface-head">
+        <div>
+          <p class="eyebrow">Estrutura alvo</p>
+          <h2>Pastas padrao</h2>
+        </div>
+      </div>
+
+      <div class="stack-list">
+        @for (folder of folders; track folder) {
+          <div class="stack-row">
+            <strong>{{ folder }}</strong>
+            <span>Drive folder mapping</span>
+          </div>
+        }
+      </div>
+    </article>
+  </div>
+
+  <article class="surface-card">
+    <div class="surface-head">
+      <div>
+        <p class="eyebrow">Arquivos selecionados</p>
+        <h2>Preflight</h2>
+      </div>
+    </div>
+
+    @if (queuedFiles().length) {
+      <div class="stack-list">
+        @for (file of queuedFiles(); track file.name + file.lastModified) {
+          <div class="stack-row">
+            <div>
+              <strong>{{ file.name }}</strong>
+              <span>{{ file.type || 'application/octet-stream' }}</span>
+            </div>
+            <span>{{ formatQueuedFileSize(file) }}</span>
+          </div>
+        }
+      </div>
+    } @else {
+      <div class="empty-inline">Nenhum arquivo na fila. Selecione arquivos ou solte-os na area acima.</div>
+    }
+  </article>
+
+  <article class="surface-card">
+    <div class="surface-head">
+      <div>
+        <p class="eyebrow">Biblioteca</p>
+        <h2>Arquivos armazenados</h2>
+      </div>
+    </div>
+
+    @if (documentsStore.items().length) {
+      <div class="stack-list">
+        @for (document of documentsStore.items(); track document.id) {
+          <div class="stack-row stack-row--stretch">
+            <div>
+              <strong>{{ document.name }}</strong>
+              <span>{{ document.relationType }} · {{ document.storageFolderPath }}</span>
+            </div>
+            <div class="row-actions">
+              <button class="tag-button" type="button" (click)="download(document.id, document.name)">Baixar</button>
+              <button class="tag-button" type="button" (click)="remove(document.id)">Remover</button>
+            </div>
+          </div>
+        }
+      </div>
+    } @else {
+      <div class="empty-inline">Os uploads concluidos vao aparecer aqui com caminho e relacao salvos no banco.</div>
+    }
+  </article>
+</section>

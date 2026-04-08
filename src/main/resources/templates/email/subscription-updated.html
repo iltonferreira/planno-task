@@ -1,0 +1,33 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Assinatura atualizada</title>
+</head>
+<body style="margin:0;padding:32px;background:#eef4ff;font-family:Segoe UI,Arial,sans-serif;color:#16324f;">
+<table role="presentation" width="100%" cellspacing="0" cellpadding="0">
+    <tr>
+        <td align="center">
+            <table role="presentation" width="620" cellspacing="0" cellpadding="0" style="max-width:620px;background:#ffffff;border-radius:24px;box-shadow:0 18px 45px rgba(16,73,140,0.12);overflow:hidden;">
+                <tr>
+                    <td style="padding:24px 32px;background:linear-gradient(135deg,#1d5fd0,#5ca7ff);color:#ffffff;">
+                        <div style="font-size:13px;letter-spacing:2px;text-transform:uppercase;opacity:0.82;">Planno</div>
+                        <h1 style="margin:12px 0 0;font-size:28px;line-height:1.2;">Sua assinatura foi atualizada</h1>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding:32px;">
+                        <p style="margin:0 0 16px;font-size:16px;line-height:1.7;">Olá, {{recipientName}}. Houve uma alteracao na sua assinatura <strong>{{subscriptionName}}</strong>.</p>
+                        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#f7faff;border-radius:18px;padding:20px;">
+                            <tr><td style="padding:0 0 12px;font-size:15px;"><strong>Status:</strong> {{subscriptionStatus}}</td></tr>
+                            <tr><td style="padding:0 0 12px;font-size:15px;"><strong>Proxima cobranca:</strong> {{nextBillingDate}}</td></tr>
+                            <tr><td style="font-size:15px;"><strong>Valor:</strong> {{price}}</td></tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+</body>
+</html>
