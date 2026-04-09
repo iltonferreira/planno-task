@@ -130,17 +130,17 @@ public class GoogleDriveIntegrationService {
         oauthState.setExpiresAt(LocalDateTime.now().plusMinutes(10));
         stateRepository.save(oauthState);
 
+        String scopeValue = urlEncode(String.join(" ", parseScopes()));
         String authorizationUrl = UriComponentsBuilder.fromUriString(authBaseUrl)
                 .queryParam("client_id", clientId)
                 .queryParam("redirect_uri", redirectUri)
                 .queryParam("response_type", "code")
-                .queryParam("scope", String.join(" ", parseScopes()))
+                .queryParam("scope", scopeValue)
                 .queryParam("access_type", "offline")
                 .queryParam("include_granted_scopes", "true")
                 .queryParam("prompt", "consent")
                 .queryParam("state", oauthState.getState())
-                .build()
-                .encode()
+                .build(true)
                 .toUriString();
 
         return new GoogleDriveAuthorizationUrlResponseDTO(authorizationUrl);
