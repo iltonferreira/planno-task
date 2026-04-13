@@ -427,7 +427,7 @@ GOOGLE_CALENDAR_REDIRECT_URI=http://localhost:8080/api/integrations/google-calen
 - **Consultor recorrente:** acompanha assinaturas, pagamentos mensais e documentos por cliente.
 - **Pequena agência:** distribui tarefas por responsável e acompanha carga de trabalho.
 - **Prestador B2B:** organiza contratos, propostas e arquivos de cada projeto no Drive.
-- **Operação em crescimento:** usa dashboard financeiro para entender receita, despesas e pendências.
+- **Operação em crescimento:** usa dashboard financeiro para entender receita, despesas e contas em aberto.
 
 ## 💡 Por Que Esse Projeto Importa
 
