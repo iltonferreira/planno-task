@@ -1,124 +1,135 @@
 <div class="app-shell">
   <aside class="shell-sidebar shell-sidebar--desktop">
-    <div class="shell-sidebar__scroll">
-      <a class="brand-block" routerLink="/dashboard">
-        <span class="brand-mark">
-          <img src="planno-logo.png" alt="Planno logo" />
+    <div class="workspace-switcher">
+      <a class="workspace-card" routerLink="/dashboard">
+        <span class="workspace-card__mark">{{ workspaceInitials() || 'PT' }}</span>
+        <span class="workspace-card__copy">
+          <small>Planno Tasks</small>
+          <strong>{{ authStore.user()?.tenantName || 'Workspace local' }}</strong>
         </span>
-        <div class="brand-copy">
-          <span class="brand-kicker">Planno Tasks</span>
-          <strong>{{ authStore.user()?.tenantName || 'Workspace operacional' }}</strong>
-          <p>{{ workspaceStatusCopy() }}</p>
-        </div>
       </a>
+    </div>
 
-      <div class="sidebar-section">
-        <p class="sidebar-label">Navegacao</p>
-        <nav class="nav-stack">
-          @for (item of navigation(); track item.path) {
-            <a [routerLink]="item.path" routerLinkActive="is-active" class="nav-link">
-              <span class="nav-link__dot"></span>
-              <div>
-                <strong>{{ item.label }}</strong>
-                <span>{{ item.caption }}</span>
-              </div>
-            </a>
-          }
-        </nav>
-      </div>
+    <div class="sidebar-scroll">
+      @for (group of navigationGroups(); track group.label) {
+        <section class="nav-group">
+          <p class="nav-group__label">{{ group.label }}</p>
+          <nav class="nav-stack">
+            @for (item of group.items; track item.path) {
+              <a [routerLink]="item.path" routerLinkActive="is-active" class="nav-link">
+                <span class="nav-link__icon">{{ item.icon }}</span>
+                <span class="nav-link__copy">
+                  <strong>{{ item.label }}</strong>
+                  <small>{{ item.caption }}</small>
+                </span>
+              </a>
+            }
+          </nav>
+        </section>
+      }
+    </div>
 
-      <div class="sidebar-foot">
-        @if (platformSubscriptionStore.isBillingAdminTenant()) {
-          <div class="pill pill--soft">Equipe interna com painel Mercado Pago liberado</div>
-        } @else if (platformSubscriptionStore.subscription()?.status) {
-          <div class="pill pill--soft">
-            Status do plano: {{ platformSubscriptionStore.subscription()?.status }}
-          </div>
-        }
+    <div class="sidebar-foot">
+      <div class="workspace-health">
+        <span class="workspace-health__dot"></span>
+        <div>
+          <strong>{{ platformSubscriptionStore.isBillingAdminTenant() ? 'Painel interno' : 'Workspace ativo' }}</strong>
+          <small>{{ workspaceStatusCopy() }}</small>
+        </div>
       </div>
     </div>
   </aside>
 
   <div class="shell-frame">
     <header class="shell-topbar">
-      <div class="shell-topbar__left">
-        <button class="mobile-nav-toggle ghost-button" type="button" (click)="toggleSidebar()">
-          Menu
-        </button>
+      <button class="mobile-nav-toggle icon-button" type="button" (click)="toggleSidebar()">Menu</button>
 
+      <div class="page-title-block">
         <div class="shell-breadcrumb">
-          <span>Planno Tasks</span>
+          <span>Workspace</span>
           <span>/</span>
           <strong>{{ activeNavigation().label }}</strong>
         </div>
-
-        <p class="shell-context">{{ activeNavigation().caption }}</p>
+        <p>{{ activeNavigation().caption }}</p>
       </div>
+
+      <label class="command-search">
+        <span>Buscar</span>
+        <input
+          type="search"
+          placeholder="Cliente, tarefa, projeto..."
+          [value]="globalSearch()"
+          (input)="updateGlobalSearch($event)"
+        />
+        @if (commandResults().length) {
+          <div class="command-results">
+            @for (item of commandResults(); track item.path) {
+              <a [routerLink]="item.path" (click)="clearGlobalSearch()">
+                <span>{{ item.icon }}</span>
+                <strong>{{ item.label }}</strong>
+                <small>{{ item.caption }}</small>
+              </a>
+            }
+          </div>
+        }
+      </label>
 
       <div class="shell-topbar__actions">
         @if (authStore.user(); as user) {
+          <a class="quick-action" routerLink="/tasks">Nova tarefa</a>
           @if (platformSubscriptionStore.requiresAction()) {
-            <a class="ghost-button" routerLink="/workspace-plan">Meu plano</a>
+            <a class="quick-action quick-action--alert" routerLink="/workspace-plan">Meu plano</a>
           }
-
-          <div class="user-pill">
-            <div class="user-pill__avatar">{{ user.name.slice(0, 1) }}</div>
-            <div>
-              <strong>{{ user.name }}</strong>
-              <span>{{ user.email }}</span>
-            </div>
-          </div>
-
-          <button class="ghost-button" type="button" (click)="logout()">Sair</button>
-        } @else {
-          <button class="primary-button" type="button" (click)="authStore.open()">
-            Entrar no workspace
+          <button class="icon-button" type="button" (click)="toggleTheme()">
+            {{ themeStore.mode() === 'dark' ? 'Claro' : 'Escuro' }}
           </button>
+          <div class="user-pill">
+            <span class="user-pill__avatar">{{ user.name.slice(0, 1) }}</span>
+            <span>
+              <strong>{{ user.name }}</strong>
+              <small>{{ user.email }}</small>
+            </span>
+          </div>
+          <button class="icon-button" type="button" (click)="logout()">Sair</button>
+        } @else {
+          <button class="primary-button" type="button" (click)="authStore.open()">Entrar</button>
         }
       </div>
     </header>
 
     <main class="main-shell">
-      <div class="document-frame">
-        <section class="content-shell">
-          <router-outlet></router-outlet>
-        </section>
-      </div>
+      <router-outlet></router-outlet>
     </main>
   </div>
 
   <aside class="shell-sidebar shell-sidebar--mobile" [class.is-open]="sidebarOpen()">
-    <div class="shell-sidebar__scroll">
-      <a class="brand-block" routerLink="/dashboard" (click)="closeSidebar()">
-        <span class="brand-mark">
-          <img src="planno-logo.png" alt="Planno logo" />
+    <div class="workspace-switcher">
+      <a class="workspace-card" routerLink="/dashboard" (click)="closeSidebar()">
+        <span class="workspace-card__mark">{{ workspaceInitials() || 'PT' }}</span>
+        <span class="workspace-card__copy">
+          <small>Planno Tasks</small>
+          <strong>{{ authStore.user()?.tenantName || 'Workspace local' }}</strong>
         </span>
-        <div class="brand-copy">
-          <span class="brand-kicker">Planno Tasks</span>
-          <strong>{{ authStore.user()?.tenantName || 'Workspace operacional' }}</strong>
-          <p>{{ workspaceStatusCopy() }}</p>
-        </div>
       </a>
+    </div>
 
-      <div class="sidebar-section">
-        <p class="sidebar-label">Navegacao</p>
-        <nav class="nav-stack">
-          @for (item of navigation(); track item.path) {
-            <a
-              [routerLink]="item.path"
-              routerLinkActive="is-active"
-              class="nav-link"
-              (click)="closeSidebar()"
-            >
-              <span class="nav-link__dot"></span>
-              <div>
-                <strong>{{ item.label }}</strong>
-                <span>{{ item.caption }}</span>
-              </div>
-            </a>
-          }
-        </nav>
-      </div>
+    <div class="sidebar-scroll">
+      @for (group of navigationGroups(); track group.label) {
+        <section class="nav-group">
+          <p class="nav-group__label">{{ group.label }}</p>
+          <nav class="nav-stack">
+            @for (item of group.items; track item.path) {
+              <a [routerLink]="item.path" routerLinkActive="is-active" class="nav-link" (click)="closeSidebar()">
+                <span class="nav-link__icon">{{ item.icon }}</span>
+                <span class="nav-link__copy">
+                  <strong>{{ item.label }}</strong>
+                  <small>{{ item.caption }}</small>
+                </span>
+              </a>
+            }
+          </nav>
+        </section>
+      }
     </div>
   </aside>
 

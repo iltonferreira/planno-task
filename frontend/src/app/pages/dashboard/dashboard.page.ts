@@ -1,5 +1,6 @@
 import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
 import { Component, computed, inject } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 import { AuthStore } from '../../core/stores/auth.store';
 import { DashboardStore } from '../../core/stores/dashboard.store';
@@ -9,7 +10,7 @@ import { UsersStore } from '../../core/stores/users.store';
 @Component({
   selector: 'app-dashboard-page',
   standalone: true,
-  imports: [CommonModule, CurrencyPipe, DatePipe],
+  imports: [CommonModule, CurrencyPipe, DatePipe, RouterLink],
   templateUrl: './dashboard.page.html',
   styleUrl: './dashboard.page.scss'
 })

@@ -829,3 +829,171 @@ textarea:focus {
   background: var(--surface-subtle);
   border-style: solid;
 }
+
+:root {
+  color-scheme: light;
+  --app-background: #f4f6f8;
+  --app-background-strong: #e8edf1;
+  --sidebar-background: #ffffff;
+  --sidebar-divider: rgba(28, 31, 35, 0.1);
+  --surface-elevated: #ffffff;
+  --surface-subtle: #f7f9fb;
+  --surface-muted: #edf2f5;
+  --surface-stroke: rgba(28, 31, 35, 0.12);
+  --surface-stroke-strong: rgba(28, 31, 35, 0.2);
+  --text-primary: #181c20;
+  --text-soft: #5e6972;
+  --text-muted: #85919a;
+  --brand-accent: #0d8f75;
+  --brand-accent-strong: #08705d;
+  --accent: #0d8f75;
+  --accent-strong: #08705d;
+  --accent-soft: rgba(13, 143, 117, 0.12);
+  --accent-rgb: 13, 143, 117;
+  --accent-blue: #2d72d9;
+  --accent-blue-deep: #1555a8;
+  --success: #16a36b;
+  --warning: #f0b429;
+  --danger: #d84f45;
+  --line-soft: var(--surface-stroke);
+  --field-background: #ffffff;
+  --field-checkbox-background: #f7f9fb;
+  --shadow-soft: 0 10px 28px rgba(28, 31, 35, 0.06);
+  --shadow-float: 0 24px 60px rgba(28, 31, 35, 0.12);
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --app-background: #111315;
+  --app-background-strong: #0d0f10;
+  --sidebar-background: #16191b;
+  --sidebar-divider: rgba(255, 255, 255, 0.09);
+  --surface-elevated: #1b1f21;
+  --surface-subtle: #202528;
+  --surface-muted: #272d30;
+  --surface-stroke: rgba(255, 255, 255, 0.1);
+  --surface-stroke-strong: rgba(255, 255, 255, 0.18);
+  --text-primary: #f4f7f8;
+  --text-soft: #b3bec5;
+  --text-muted: #77838b;
+  --brand-accent: #20b997;
+  --brand-accent-strong: #5ee0c0;
+  --accent: #20b997;
+  --accent-strong: #5ee0c0;
+  --accent-soft: rgba(32, 185, 151, 0.16);
+  --accent-rgb: 32, 185, 151;
+  --accent-blue: #6aa7ff;
+  --accent-blue-deep: #3e7fd4;
+  --success: #39c982;
+  --warning: #f2c14e;
+  --danger: #ff7a70;
+  --field-background: #1b1f21;
+  --field-checkbox-background: #202528;
+  --shadow-soft: none;
+  --shadow-float: 0 24px 60px rgba(0, 0, 0, 0.36);
+}
+
+body {
+  background: var(--app-background);
+}
+
+h1,
+h2,
+h3,
+strong {
+  letter-spacing: 0;
+}
+
+.page-shell {
+  gap: 1rem;
+}
+
+.page-header h1,
+.page-header h2 {
+  font-size: clamp(2rem, 3.8rem, 2.8rem);
+  line-height: 1.04;
+}
+
+.surface-card,
+.metric-card,
+.mini-card,
+.stack-row,
+.task-card,
+.workspace-chip,
+.user-pill,
+.inline-error,
+.empty-inline,
+.checkbox-tile,
+.avatar-chip,
+input,
+select,
+textarea,
+.primary-button,
+.ghost-button,
+.tag-button {
+  border-radius: 8px;
+}
+
+.surface-card,
+.metric-card {
+  box-shadow: none;
+}
+
+.surface-card {
+  padding: 1.05rem;
+}
+
+.metric-card {
+  min-height: 9.5rem;
+  padding: 1rem;
+}
+
+.metric-card strong {
+  font-size: clamp(1.55rem, 2.7rem, 2.25rem);
+}
+
+input,
+select,
+textarea {
+  padding: 0.78rem 0.85rem;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: rgba(var(--accent-rgb), 0.46);
+  box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.12);
+}
+
+.primary-button,
+.ghost-button,
+.tag-button {
+  box-shadow: none;
+}
+
+.primary-button {
+  padding: 0.78rem 1rem;
+  background: var(--brand-accent);
+  border-color: var(--brand-accent);
+}
+
+.ghost-button,
+.tag-button {
+  padding: 0.72rem 0.9rem;
+}
+
+.pill,
+.glass-badge {
+  border-radius: 8px;
+}
+
+.stack-row,
+.mini-card,
+.task-card {
+  background: var(--surface-subtle);
+}
+
+.bar-track,
+.bar-fill {
+  border-radius: 8px;
+}

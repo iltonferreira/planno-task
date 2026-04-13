@@ -23,6 +23,13 @@ interface NavigationItem {
   path: string;
   label: string;
   caption: string;
+  group: 'Operacao' | 'Comercial' | 'Financeiro' | 'Sistema';
+  icon: string;
+}
+
+interface NavigationGroup {
+  label: NavigationItem['group'];
+  items: NavigationItem[];
 }
 
 @Component({
@@ -34,7 +41,7 @@ interface NavigationItem {
 })
 export class App {
   readonly authStore = inject(AuthStore);
-  private readonly themeStore = inject(ThemeStore);
+  readonly themeStore = inject(ThemeStore);
   private readonly router = inject(Router);
   private readonly dashboardStore = inject(DashboardStore);
   private readonly usersStore = inject(UsersStore);
@@ -57,26 +64,25 @@ export class App {
   );
 
   readonly sidebarOpen = signal(false);
+  readonly globalSearch = signal('');
   private readonly baseNavigation: NavigationItem[] = [
-    { path: '/dashboard', label: 'Dashboard', caption: 'Visao geral da operacao' },
-    { path: '/workspace-plan', label: 'Meu plano', caption: 'Assinatura da plataforma' },
-    { path: '/clients', label: 'Clientes', caption: 'Relacionamentos e CRM' },
-    { path: '/projects', label: 'Projetos', caption: 'Roadmap de entrega' },
-    { path: '/tasks', label: 'Tarefas', caption: 'Kanban do dia a dia' },
-    { path: '/calendar', label: 'Calendario', caption: 'Agenda pessoal de tarefas' },
+    { path: '/dashboard', label: 'Home', caption: 'Visao geral da operacao', group: 'Operacao', icon: 'H' },
+    { path: '/tasks', label: 'Tarefas', caption: 'Kanban do dia a dia', group: 'Operacao', icon: 'T' },
+    { path: '/calendar', label: 'Calendario', caption: 'Agenda pessoal de tarefas', group: 'Operacao', icon: 'C' },
+    { path: '/projects', label: 'Projetos', caption: 'Roadmap de entrega', group: 'Operacao', icon: 'P' },
+    { path: '/clients', label: 'Clientes', caption: 'Relacionamentos e CRM', group: 'Comercial', icon: 'R' },
+    { path: '/documents', label: 'Documentos', caption: 'Arquivos e contratos', group: 'Comercial', icon: 'D' },
+    { path: '/knowledge-base', label: 'Base de conhecimento', caption: 'Playbooks e notas internas', group: 'Comercial', icon: 'B' },
+    { path: '/workspace-plan', label: 'Meu plano', caption: 'Assinatura da plataforma', group: 'Financeiro', icon: 'M' },
+    { path: '/payments', label: 'Pagamentos', caption: 'Contas a pagar e recebiveis', group: 'Financeiro', icon: '$' },
     {
       path: '/workspace-admin',
       label: 'Provisionamento',
       caption: 'Criar workspaces pagos ou cortesia',
+      group: 'Sistema',
+      icon: '+',
     },
-    { path: '/subscriptions', label: 'Assinaturas', caption: 'Receitas da conta Mercado Pago' },
-    { path: '/payments', label: 'Pagamentos', caption: 'Contas a pagar e recebiveis' },
-    { path: '/documents', label: 'Documentos', caption: 'Arquivos e contratos' },
-    {
-      path: '/knowledge-base',
-      label: 'Base de Conhecimento',
-      caption: 'Playbooks e notas internas',
-    },
+    { path: '/subscriptions', label: 'Assinaturas', caption: 'Receitas da conta Mercado Pago', group: 'Sistema', icon: 'S' },
   ];
   readonly navigation = computed(() =>
     this.baseNavigation.filter(
@@ -105,6 +111,34 @@ export class App {
         (item) => currentUrl === item.path || currentUrl.startsWith(`${item.path}/`),
       ) ?? this.navigation()[0]
     );
+  });
+  readonly navigationGroups = computed<NavigationGroup[]>(() => {
+    const order: NavigationItem['group'][] = ['Operacao', 'Comercial', 'Financeiro', 'Sistema'];
+    return order
+      .map((label) => ({
+        label,
+        items: this.navigation().filter((item) => item.group === label),
+      }))
+      .filter((group) => group.items.length > 0);
+  });
+  readonly workspaceInitials = computed(() => {
+    const name = this.authStore.user()?.tenantName || 'Planno Tasks';
+    return name
+      .split(/\s+/)
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((part) => part[0]?.toUpperCase())
+      .join('');
+  });
+  readonly commandResults = computed(() => {
+    const query = this.globalSearch().trim().toLowerCase();
+    if (!query) {
+      return [];
+    }
+
+    return this.navigation()
+      .filter((item) => `${item.label} ${item.caption} ${item.group}`.toLowerCase().includes(query))
+      .slice(0, 6);
   });
   constructor() {
     if (!this.authStore.isAuthenticated()) {
@@ -136,6 +170,19 @@ export class App {
   logout(): void {
     this.authStore.logout();
     this.closeSidebar();
+  }
+
+  toggleTheme(): void {
+    this.themeStore.mode.update((mode) => (mode === 'dark' ? 'light' : 'dark'));
+  }
+
+  updateGlobalSearch(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.globalSearch.set(input.value);
+  }
+
+  clearGlobalSearch(): void {
+    this.globalSearch.set('');
   }
 
   private async bootstrapWorkspace(): Promise<void> {

@@ -1,15 +1,30 @@
 <section class="page-shell">
   <header class="page-header">
     <div>
-      <p class="eyebrow">Financial cockpit</p>
+      <p class="eyebrow">Workspace operacional</p>
       <h1>Bem-vindo de volta, {{ userName() }}</h1>
-      <p class="page-copy">Uma visao unica do operacional, financeiro e do ritmo de entrega da sua operacao freelancer.</p>
+      <p class="page-copy">Um painel rapido para priorizar entregas, acompanhar caixa, revisar clientes e manter a equipe no mesmo ritmo.</p>
     </div>
-    <div class="glass-badge">
-      <span class="status-dot"></span>
-      Planno Tasks
+    <div class="dashboard-actions">
+      <a class="primary-button" routerLink="/tasks">Criar tarefa</a>
+      <a class="ghost-button" routerLink="/clients">Novo cliente</a>
     </div>
   </header>
+
+  <div class="launch-strip">
+    <a routerLink="/projects">
+      <strong>Planejar entregas</strong>
+      <span>Revise projetos ativos e destrave proximos passos.</span>
+    </a>
+    <a routerLink="/payments">
+      <strong>Fechar financeiro</strong>
+      <span>Acompanhe pendencias, entradas aprovadas e vencimentos.</span>
+    </a>
+    <a routerLink="/knowledge-base">
+      <strong>Padronizar operacao</strong>
+      <span>Documente playbooks para reduzir retrabalho da equipe.</span>
+    </a>
+  </div>
 
   <div class="metric-grid">
     <article class="metric-card">
@@ -62,7 +77,7 @@
     <article class="surface-card">
       <div class="surface-head">
         <div>
-          <p class="eyebrow">Finance</p>
+          <p class="eyebrow">Receita</p>
           <h2>Clientes com maior lifetime value</h2>
         </div>
       </div>
