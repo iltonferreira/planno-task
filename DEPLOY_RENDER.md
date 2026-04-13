@@ -1,6 +1,6 @@
-# Deploy no Render
+# Deploy do Planno Tasks no Render
 
-Este repositório já está preparado para subir no Render com:
+Este repositório já está preparado para subir o Planno Tasks no Render com:
 
 - `planno-api`: backend Spring Boot em Docker
 - `planno-web`: frontend Angular como Static Site
@@ -25,7 +25,7 @@ Esse slug é o tenant que pode ver as telas internas de billing e provisionament
 
 1. Faça login no Render.
 2. Clique em `New +` > `Blueprint`.
-3. Conecte o repositório `plannocorp/planno-dash`.
+3. Conecte o repositório deste projeto.
 4. O Render vai ler o [render.yaml](/D:/Projetos%20Planno/dash-api/render.yaml) e criar:
    - `planno-api`
    - `planno-web`

@@ -17,6 +17,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Locale;
 
 @Component
 @RequiredArgsConstructor
@@ -36,26 +37,32 @@ public class SecurityFilter extends OncePerRequestFilter {
         if (token != null) {
             var email = tokenService.validateToken(token);
             if (email != null && !email.isBlank()) {
-                var user = userRepository.findByEmail(email).orElseThrow();
+                var user = userRepository.findByEmail(email).orElse(null);
+                if (user == null) {
+                    unauthorized(response);
+                    return;
+                }
 
                 TenantContext.setTenantId(user.getTenant().getId());
 
                 if (!isBillingAdminTenant(user.getTenant().getSlug())
                         && (!user.getTenant().isActive() || isBlockedByPlatformBilling(user.getTenant().getId(), user.getTenant().getBillingMode(), request.getServletPath()))) {
-                    response.setStatus(HttpServletResponse.SC_PAYMENT_REQUIRED);
-                    response.setContentType("application/json");
-                    response.getWriter().write("{\"status\":402,\"message\":\"O workspace esta com o plano inativo. Acesse Meu plano para regularizar.\"}");
+                    paymentRequired(response);
                     return;
                 }
 
                 var authentication = new UsernamePasswordAuthenticationToken(user, null, Collections.emptyList());
                 SecurityContextHolder.getContext().setAuthentication(authentication);
+            } else {
+                unauthorized(response);
+                return;
             }
         }
 
         try {
             filterChain.doFilter(request, response);
         } finally {
+            SecurityContextHolder.clearContext();
             TenantContext.clear();
         }
     }
@@ -63,7 +70,21 @@ public class SecurityFilter extends OncePerRequestFilter {
     private String recoverToken(HttpServletRequest request) {
         var authHeader = request.getHeader("Authorization");
         if (authHeader == null) return null;
-        return authHeader.replace("Bearer ", "");
+        if (!authHeader.toLowerCase(Locale.ROOT).startsWith("bearer ")) return null;
+        String token = authHeader.substring(7).trim();
+        return token.isBlank() ? null : token;
+    }
+
+    private void unauthorized(HttpServletResponse response) throws IOException {
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setContentType("application/json");
+        response.getWriter().write("{\"status\":401,\"message\":\"Token invalido ou expirado.\"}");
+    }
+
+    private void paymentRequired(HttpServletResponse response) throws IOException {
+        response.setStatus(HttpServletResponse.SC_PAYMENT_REQUIRED);
+        response.setContentType("application/json");
+        response.getWriter().write("{\"status\":402,\"message\":\"O workspace esta com o plano inativo. Acesse Meu plano para regularizar.\"}");
     }
 
     private boolean isBlockedByPlatformBilling(Long tenantId, TenantBillingMode billingMode, String path) {

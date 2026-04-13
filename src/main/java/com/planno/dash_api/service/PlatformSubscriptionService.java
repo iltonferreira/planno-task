@@ -26,10 +26,10 @@ public class PlatformSubscriptionService {
     private final CurrentUserService currentUserService;
     private final MercadoPagoService mercadoPagoService;
 
-    @Value("${app.platform-billing.plan-code:planno-pro-monthly}")
+    @Value("${app.platform-billing.plan-code:planno-tasks-pro-monthly}")
     private String planCode;
 
-    @Value("${app.platform-billing.plan-name:Planno Pro}")
+    @Value("${app.platform-billing.plan-name:Planno Tasks Pro}")
     private String planName;
 
     @Value("${app.platform-billing.monthly-price:39.90}")

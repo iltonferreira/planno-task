@@ -11,6 +11,7 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Map;
@@ -18,6 +19,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class MercadoPagoWebhookSignatureService {
+
+    private static final long MAX_SIGNATURE_AGE_SECONDS = 300;
 
     @Value("${app.mercado-pago.webhook-secret:}")
     private String webhookSecret;
@@ -51,6 +54,7 @@ public class MercadoPagoWebhookSignatureService {
         if (!StringUtils.hasText(ts) || !StringUtils.hasText(expectedHash)) {
             throw new UnauthorizedException("Webhook do Mercado Pago com assinatura invalida.");
         }
+        validateTimestamp(ts);
 
         String manifest = "id:" + dataId + ";request-id:" + requestId + ";ts:" + ts + ";";
         String computedHash = hmacSha256(manifest, webhookSecret);
@@ -58,6 +62,18 @@ public class MercadoPagoWebhookSignatureService {
                 computedHash.getBytes(StandardCharsets.UTF_8),
                 expectedHash.getBytes(StandardCharsets.UTF_8)
         )) {
+            throw new UnauthorizedException("Webhook do Mercado Pago com assinatura invalida.");
+        }
+    }
+
+    private void validateTimestamp(String ts) {
+        try {
+            long timestamp = Long.parseLong(ts);
+            long now = Instant.now().getEpochSecond();
+            if (Math.abs(now - timestamp) > MAX_SIGNATURE_AGE_SECONDS) {
+                throw new UnauthorizedException("Webhook do Mercado Pago com assinatura expirada.");
+            }
+        } catch (NumberFormatException exception) {
             throw new UnauthorizedException("Webhook do Mercado Pago com assinatura invalida.");
         }
     }

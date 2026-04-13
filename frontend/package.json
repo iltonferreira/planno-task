@@ -1,5 +1,5 @@
 {
-  "name": "frontend",
+  "name": "planno-tasks-web",
   "version": "0.0.0",
   "scripts": {
     "prepare:runtime-config": "node scripts/write-runtime-config.mjs",

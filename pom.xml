@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.planno</groupId>
-	<artifactId>dash-api</artifactId>
+	<artifactId>planno-tasks-api</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name/>
-	<description/>
+	<name>Planno Tasks API</name>
+	<description>Backend do Planno Tasks</description>
 	<url/>
 	<licenses>
 		<license/>

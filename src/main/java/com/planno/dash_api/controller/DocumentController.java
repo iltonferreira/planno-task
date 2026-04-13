@@ -7,9 +7,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.util.UriUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @RestController
@@ -42,9 +44,10 @@ public class DocumentController {
         String contentType = (document.contentType() == null || document.contentType().isBlank())
                 ? MediaType.APPLICATION_OCTET_STREAM_VALUE
                 : document.contentType();
+        String safeFileName = UriUtils.encode(document.fileName(), StandardCharsets.UTF_8);
 
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + document.fileName() + "\"")
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename*=UTF-8''" + safeFileName)
                 .contentType(MediaType.parseMediaType(contentType))
                 .body(document.content());
     }

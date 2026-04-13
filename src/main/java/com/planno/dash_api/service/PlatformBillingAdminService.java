@@ -48,7 +48,7 @@ public class PlatformBillingAdminService {
     private final PlatformSubscriptionService platformSubscriptionService;
     private final MercadoPagoService mercadoPagoService;
 
-    @Value("${app.platform-billing.plan-name:Planno Pro}")
+    @Value("${app.platform-billing.plan-name:Planno Tasks Pro}")
     private String planName;
 
     @Value("${app.platform-billing.monthly-price:39.90}")

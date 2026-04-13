@@ -11,8 +11,10 @@ import com.planno.dash_api.repository.DocumentAssetRepository;
 import com.planno.dash_api.repository.KnowledgeBasePageRepository;
 import com.planno.dash_api.repository.ProjectRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -29,6 +31,9 @@ public class DocumentService {
     private final CurrentUserService currentUserService;
     private final StorageService storageService;
     private final DocumentMapper mapper;
+
+    @Value("${app.security.max-upload-size-bytes:10485760}")
+    private long maxUploadSizeBytes;
 
     @Transactional(readOnly = true)
     public List<DocumentResponseDTO> findAll(DocumentRelationType relationType, Long relationId) {
@@ -56,16 +61,20 @@ public class DocumentService {
         if (file == null || file.isEmpty()) {
             throw new BusinessException("Nenhum arquivo foi enviado.");
         }
+        if (file.getSize() > maxUploadSizeBytes) {
+            throw new BusinessException("Arquivo excede o limite permitido.");
+        }
 
         var currentUser = currentUserService.getCurrentUser();
         String folderPath = resolveFolderPath(currentUser.getTenant().getId(), relationType, relationId);
 
         try {
+            String originalFileName = sanitizeFileName(file.getOriginalFilename());
             StorageService.StorageFolder folder = storageService.ensureFolder(folderPath);
             StorageService.StoredFile storedFile = storageService.upload(
                     folder.folderId(),
                     folder.path(),
-                    file.getOriginalFilename(),
+                    originalFileName,
                     file.getContentType(),
                     file.getBytes()
             );
@@ -130,6 +139,17 @@ public class DocumentService {
             throw new BusinessException("Este tipo de documento exige um relationId.");
         }
         return relationId;
+    }
+
+    private String sanitizeFileName(String fileName) {
+        String sanitized = StringUtils.hasText(fileName) ? fileName.trim() : "documento";
+        sanitized = sanitized.replace("\\", "/");
+        int lastSlash = sanitized.lastIndexOf('/');
+        if (lastSlash >= 0) {
+            sanitized = sanitized.substring(lastSlash + 1);
+        }
+        sanitized = sanitized.replaceAll("[\\r\\n\\t\\x00]", "_");
+        return sanitized.isBlank() ? "documento" : sanitized;
     }
 
     public record DownloadedDocument(
