@@ -1,5 +1,6 @@
 HELP.md
 target/
+data/
 *.log
 *-err.log
 *-out.log

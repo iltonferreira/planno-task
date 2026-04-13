@@ -10,6 +10,7 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -31,6 +32,9 @@ public class SecurityConfig {
     @Value("${app.cors.allowed-origins:http://localhost:4200}")
     private String allowedOrigins;
 
+    @Value("${spring.h2.console.enabled:false}")
+    private boolean h2ConsoleEnabled;
+
 
     private final SecurityFilter securityFilter; // InjeÃ§Ã£o do filtro customizado
 
@@ -42,7 +46,13 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .headers(headers -> headers
                         .contentSecurityPolicy(csp -> csp.policyDirectives("default-src 'none'; frame-ancestors 'none'; base-uri 'none'"))
-                        .frameOptions(frame -> frame.deny())
+                        .frameOptions(frame -> {
+                            if (h2ConsoleEnabled) {
+                                frame.sameOrigin();
+                            } else {
+                                frame.deny();
+                            }
+                        })
                         .referrerPolicy(referrer -> referrer.policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.NO_REFERRER))
                         .httpStrictTransportSecurity(hsts -> hsts.includeSubDomains(true).maxAgeInSeconds(31536000))
                 )
@@ -56,6 +66,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/platform-billing/webhooks/mercado-pago").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/integrations/google-drive/callback").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/integrations/google-calendar/callback").permitAll()
+                        .requestMatchers("/h2-console/**").access((authentication, context) -> new AuthorizationDecision(h2ConsoleEnabled))
                         .anyRequest().authenticated()
                 )
                 // AQUI: Dizemos para o Spring rodar o nosso filtro ANTES do filtro padrÃ£o de usuÃ¡rio/senha

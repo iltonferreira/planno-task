@@ -175,6 +175,21 @@ $env:CORS_ALLOWED_ORIGINS="http://localhost:4200"
 .\mvnw.cmd spring-boot:run
 ```
 
+Backend com H2 persistente para teste local:
+
+```powershell
+$env:SPRING_PROFILES_ACTIVE="h2"
+$env:JWT_SECRET="<segredo-local-com-32-caracteres-ou-mais>"
+.\mvnw.cmd spring-boot:run
+```
+
+O perfil `h2` grava o banco em `data/planno-tasks.mv.db`, cria as tabelas com Hibernate e provisiona um usuario de teste:
+
+```text
+E-mail: teste@plannotasks.local
+Senha: planno123
+```
+
 Frontend:
 
 ```powershell
