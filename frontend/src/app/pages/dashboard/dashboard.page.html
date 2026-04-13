@@ -1,125 +1,55 @@
-<section class="page-shell">
-  <header class="page-header">
+<section class="dashboard-page">
+  <header class="dashboard-hero">
     <div>
-      <p class="eyebrow">Workspace operacional</p>
-      <h1>Bem-vindo de volta, {{ userName() }}</h1>
-      <p class="page-copy">Um painel rapido para priorizar entregas, acompanhar caixa, revisar clientes e manter a equipe no mesmo ritmo.</p>
+      <p class="eyebrow">Central de comando</p>
+      <h1>Bom trabalho, {{ userName() }}</h1>
+      <p>Operacao, receita, clientes e prioridades em uma tela limpa para tomada de decisao.</p>
     </div>
-    <div class="dashboard-actions">
-      <a class="primary-button" routerLink="/tasks">Criar tarefa</a>
-      <a class="ghost-button" routerLink="/clients">Novo cliente</a>
+    <div class="dashboard-hero__actions">
+      <a class="primary-button" routerLink="/tasks">Nova tarefa</a>
+      <a class="ghost-button" routerLink="/payments">Registrar pagamento</a>
     </div>
   </header>
 
-  <div class="launch-strip">
-    <a routerLink="/projects">
-      <strong>Planejar entregas</strong>
-      <span>Revise projetos ativos e destrave proximos passos.</span>
-    </a>
-    <a routerLink="/payments">
-      <strong>Fechar financeiro</strong>
-      <span>Acompanhe pendencias, entradas aprovadas e vencimentos.</span>
-    </a>
-    <a routerLink="/knowledge-base">
-      <strong>Padronizar operacao</strong>
-      <span>Documente playbooks para reduzir retrabalho da equipe.</span>
-    </a>
-  </div>
-
-  <div class="metric-grid">
-    <article class="metric-card">
-      <span>Clientes ativos</span>
-      <strong>{{ clientsCount() }}</strong>
-      <small>CRM, documentos e historico financeiro por tenant</small>
-    </article>
-    <article class="metric-card">
-      <span>Projetos em andamento</span>
-      <strong>{{ activeProjects() }}</strong>
-      <small>{{ knowledgeBaseEntries() }} playbooks e SOPs no workspace</small>
-    </article>
-    <article class="metric-card">
+  <section class="kpi-row" aria-label="Indicadores principais">
+    <article>
       <span>Caixa liquido</span>
       <strong>{{ netCashflow() | currency:'BRL':'symbol':'1.0-0' }}</strong>
-      <small>{{ approvedIncome() | currency:'BRL':'symbol':'1.0-0' }} em entradas aprovadas</small>
+      <small>{{ approvedIncome() | currency:'BRL':'symbol':'1.0-0' }} aprovados</small>
     </article>
-    <article class="metric-card">
+    <article>
       <span>Receita recorrente</span>
       <strong>{{ recurringRevenue() | currency:'BRL':'symbol':'1.0-0' }}</strong>
-      <small>{{ overdueRevenue() | currency:'BRL':'symbol':'1.0-0' }} em recorrencias vencidas</small>
+      <small>{{ overdueRevenue() | currency:'BRL':'symbol':'1.0-0' }} vencidos</small>
     </article>
-  </div>
-
-  <div class="section-grid section-grid--two">
-    <article class="surface-card">
-      <div class="surface-head">
-        <div>
-          <p class="eyebrow">Operacao</p>
-          <h2>Status do Kanban</h2>
-        </div>
-        <span class="pill pill--soft">Pendencias: {{ pendingIncome() | currency:'BRL':'symbol':'1.0-0' }}</span>
-      </div>
-
-      <div class="bar-list">
-        @for (item of taskDistribution(); track item.status) {
-          <div class="bar-row">
-            <div class="bar-label">
-              <strong>{{ item.status }}</strong>
-              <span>{{ item.count }} cards</span>
-            </div>
-            <div class="bar-track">
-              <div class="bar-fill" [style.width]="item.width"></div>
-            </div>
-          </div>
-        }
-      </div>
+    <article>
+      <span>Clientes ativos</span>
+      <strong>{{ clientsCount() }}</strong>
+      <small>CRM e historico por workspace</small>
     </article>
-
-    <article class="surface-card">
-      <div class="surface-head">
-        <div>
-          <p class="eyebrow">Receita</p>
-          <h2>Clientes com maior lifetime value</h2>
-        </div>
-      </div>
-
-      @if (revenueLeaders().length) {
-        <div class="bar-list">
-          @for (client of revenueLeaders(); track client.clientId) {
-            <div class="bar-row">
-              <div class="bar-label">
-                <strong>{{ client.clientName }}</strong>
-                <span>Receita recorrente + recebimentos aprovados</span>
-              </div>
-              <div class="bar-track">
-                <div class="bar-fill bar-fill--accent" [style.width]="client.width"></div>
-              </div>
-              <strong class="bar-value">{{ client.value | currency:'BRL':'symbol':'1.0-0' }}</strong>
-            </div>
-          }
-        </div>
-      } @else {
-        <div class="empty-inline">Assim que clientes e assinaturas forem cadastrados, o ranking aparece aqui.</div>
-      }
+    <article>
+      <span>Projetos ativos</span>
+      <strong>{{ activeProjects() }}</strong>
+      <small>{{ knowledgeBaseEntries() }} playbooks publicados</small>
     </article>
-  </div>
+  </section>
 
-  <div class="section-grid section-grid--two">
-    <article class="surface-card">
-      <div class="surface-head">
+  <section class="dashboard-grid">
+    <article class="panel panel--wide">
+      <div class="panel-head">
         <div>
-          <p class="eyebrow">Receita</p>
-          <h2>Ultimos 6 meses</h2>
+          <p class="eyebrow">Fluxo mensal</p>
+          <h2>Receita dos ultimos 6 meses</h2>
         </div>
-        <span class="pill pill--soft">Saidas: {{ approvedExpenses() | currency:'BRL':'symbol':'1.0-0' }}</span>
+        <span>Saidas: {{ approvedExpenses() | currency:'BRL':'symbol':'1.0-0' }}</span>
       </div>
-
       @if (revenueByMonth().length) {
-        <div class="chart-bars">
+        <div class="revenue-chart">
           @for (point of revenueByMonth(); track point.label) {
-            <div class="chart-column">
-              <div class="chart-bar" [style.height]="point.height"></div>
+            <div>
+              <span class="revenue-chart__bar" [style.height]="point.height"></span>
               <strong>{{ point.value | currency:'BRL':'symbol':'1.0-0' }}</strong>
-              <span>{{ point.label }}</span>
+              <small>{{ point.label }}</small>
             </div>
           }
         </div>
@@ -128,89 +58,39 @@
       }
     </article>
 
-    <article class="surface-card">
-      <div class="surface-head">
+    <article class="panel">
+      <div class="panel-head">
         <div>
-          <p class="eyebrow">Cobranca</p>
-          <h2>Pipeline financeiro</h2>
+          <p class="eyebrow">Execucao</p>
+          <h2>Kanban</h2>
         </div>
       </div>
-
-      <div class="metric-mini-grid">
-        <div class="mini-metric">
-          <span>Entradas pendentes</span>
-          <strong>{{ pendingIncome() | currency:'BRL':'symbol':'1.0-0' }}</strong>
-        </div>
-        <div class="mini-metric">
-          <span>Saidas pendentes</span>
-          <strong>{{ pendingExpenses() | currency:'BRL':'symbol':'1.0-0' }}</strong>
-        </div>
-      </div>
-
-      @if (paymentBreakdown().length) {
-        <div class="stack-list">
-          @for (entry of paymentBreakdown(); track entry.label) {
-            <div class="stack-row">
-              <strong>{{ entry.label }}</strong>
-              <span>{{ entry.value }} registros</span>
+      <div class="compact-list">
+        @for (item of taskDistribution(); track item.status) {
+          <div class="progress-line">
+            <div>
+              <strong>{{ item.status }}</strong>
+              <small>{{ item.count }} cards</small>
             </div>
-          }
-        </div>
-      } @else {
-        <div class="empty-inline">Assim que pagamentos forem criados, o funil aparece aqui.</div>
-      }
-    </article>
-  </div>
-
-  <div class="section-grid section-grid--two">
-    <article class="surface-card">
-      <div class="surface-head">
-        <div>
-          <p class="eyebrow">Equipe</p>
-          <h2>Carga por responsavel</h2>
-        </div>
+            <span><i [style.width]="item.width"></i></span>
+          </div>
+        }
       </div>
-
-      @if (workloadHighlights().length) {
-        <div class="bar-list">
-          @for (entry of workloadHighlights(); track entry.user.id) {
-            <div class="bar-row">
-              <div class="bar-label">
-                <strong>{{ entry.user.name }}</strong>
-                <span>{{ entry.user.email }}</span>
-              </div>
-              <div class="bar-track">
-                <div class="bar-fill bar-fill--neutral" [style.width]="entry.width"></div>
-              </div>
-              <strong class="bar-value">{{ entry.total }}</strong>
-            </div>
-          }
-        </div>
-      } @else {
-        <div class="empty-inline">Cadastre usuarios e vincule tarefas para acompanhar a distribuicao de carga.</div>
-      }
     </article>
 
-    <article class="surface-card">
-      <div class="surface-head">
+    <article class="panel">
+      <div class="panel-head">
         <div>
-          <p class="eyebrow">Foco da semana</p>
+          <p class="eyebrow">Foco</p>
           <h2>Agenda critica</h2>
         </div>
       </div>
-
       @if (focusTasks().length) {
-        <div class="stack-list">
+        <div class="compact-list">
           @for (task of focusTasks(); track task.id) {
-            <div class="stack-row">
-              <div>
-                <strong>{{ task.title }}</strong>
-                <span>{{ task.projectName || 'Sem projeto' }} · {{ task.status }}</span>
-              </div>
-              <div class="stack-meta">
-                <span>{{ task.dueDate | date:'dd/MM' }}</span>
-                <span>{{ task.responsibleUser?.name || 'Sem responsavel' }}</span>
-              </div>
+            <div class="task-line">
+              <strong>{{ task.title }}</strong>
+              <small>{{ task.projectName || 'Sem projeto' }} - {{ task.dueDate | date:'dd/MM' }}</small>
             </div>
           }
         </div>
@@ -218,5 +98,77 @@
         <div class="empty-inline">Nenhuma entrega urgente cadastrada no momento.</div>
       }
     </article>
-  </div>
+
+    <article class="panel">
+      <div class="panel-head">
+        <div>
+          <p class="eyebrow">Clientes</p>
+          <h2>Maior LTV</h2>
+        </div>
+      </div>
+      @if (revenueLeaders().length) {
+        <div class="compact-list">
+          @for (client of revenueLeaders(); track client.clientId) {
+            <div class="progress-line">
+              <div>
+                <strong>{{ client.clientName }}</strong>
+                <small>{{ client.value | currency:'BRL':'symbol':'1.0-0' }}</small>
+              </div>
+              <span><i [style.width]="client.width"></i></span>
+            </div>
+          }
+        </div>
+      } @else {
+        <div class="empty-inline">Cadastre clientes e receitas para ver o ranking.</div>
+      }
+    </article>
+
+    <article class="panel">
+      <div class="panel-head">
+        <div>
+          <p class="eyebrow">Financeiro</p>
+          <h2>Pipeline</h2>
+        </div>
+      </div>
+      <div class="finance-split">
+        <div>
+          <span>Entradas pendentes</span>
+          <strong>{{ pendingIncome() | currency:'BRL':'symbol':'1.0-0' }}</strong>
+        </div>
+        <div>
+          <span>Saidas pendentes</span>
+          <strong>{{ pendingExpenses() | currency:'BRL':'symbol':'1.0-0' }}</strong>
+        </div>
+      </div>
+      @if (paymentBreakdown().length) {
+        <div class="status-grid">
+          @for (entry of paymentBreakdown(); track entry.label) {
+            <span>{{ entry.label }} <strong>{{ entry.value }}</strong></span>
+          }
+        </div>
+      }
+    </article>
+
+    <article class="panel panel--wide">
+      <div class="panel-head">
+        <div>
+          <p class="eyebrow">Equipe</p>
+          <h2>Carga por responsavel</h2>
+        </div>
+      </div>
+      @if (workloadHighlights().length) {
+        <div class="team-grid">
+          @for (entry of workloadHighlights(); track entry.user.id) {
+            <div>
+              <span>{{ entry.user.name.slice(0, 1) }}</span>
+              <strong>{{ entry.user.name }}</strong>
+              <small>{{ entry.total }} tarefas</small>
+            </div>
+          }
+        </div>
+      } @else {
+        <div class="empty-inline">Cadastre usuarios e vincule tarefas para acompanhar a distribuicao de carga.</div>
+      }
+    </article>
+  </section>
 </section>

@@ -997,3 +997,219 @@ textarea:focus {
 .bar-fill {
   border-radius: 8px;
 }
+
+:root {
+  color-scheme: light;
+  --app-background: #eef2f6;
+  --topbar-background: #f8fafc;
+  --nav-background: #ffffff;
+  --surface: #ffffff;
+  --surface-elevated: #ffffff;
+  --surface-subtle: #f8fafc;
+  --surface-muted: #eef2f6;
+  --field-background: #ffffff;
+  --field-checkbox-background: #f8fafc;
+  --line: #d9e1e8;
+  --line-soft: #e6edf2;
+  --surface-stroke: #d9e1e8;
+  --surface-stroke-strong: #c5d0d9;
+  --text-primary: #101418;
+  --text-soft: #596775;
+  --text-muted: #8593a0;
+  --brand: #0a7c62;
+  --brand-strong: #075f4d;
+  --brand-soft: #dff5ee;
+  --nav-active: #eef7f4;
+  --accent: #0a7c62;
+  --accent-strong: #075f4d;
+  --accent-soft: rgba(10, 124, 98, 0.13);
+  --accent-rgb: 10, 124, 98;
+  --accent-blue: #2164d8;
+  --accent-blue-deep: #164aa5;
+  --success: #16a36b;
+  --warning: #efb429;
+  --danger: #d9473f;
+  --shadow-soft: 0 10px 28px rgba(16, 20, 24, 0.06);
+  --shadow-float: 0 20px 54px rgba(16, 20, 24, 0.16);
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --app-background: #111416;
+  --topbar-background: #171b1e;
+  --nav-background: #14181b;
+  --surface: #1b2024;
+  --surface-elevated: #1b2024;
+  --surface-subtle: #20262a;
+  --surface-muted: #273036;
+  --field-background: #1b2024;
+  --field-checkbox-background: #20262a;
+  --line: rgba(255, 255, 255, 0.1);
+  --line-soft: rgba(255, 255, 255, 0.07);
+  --surface-stroke: rgba(255, 255, 255, 0.1);
+  --surface-stroke-strong: rgba(255, 255, 255, 0.18);
+  --text-primary: #f3f7f8;
+  --text-soft: #afbcc5;
+  --text-muted: #7c8a94;
+  --brand: #1ab28f;
+  --brand-strong: #6be4c5;
+  --brand-soft: rgba(26, 178, 143, 0.16);
+  --nav-active: rgba(26, 178, 143, 0.12);
+  --accent: #1ab28f;
+  --accent-strong: #6be4c5;
+  --accent-soft: rgba(26, 178, 143, 0.16);
+  --accent-rgb: 26, 178, 143;
+  --accent-blue: #64a1ff;
+  --accent-blue-deep: #3d74c8;
+  --success: #3bd08b;
+  --warning: #f2c14e;
+  --danger: #ff766c;
+  --shadow-soft: none;
+  --shadow-float: 0 20px 54px rgba(0, 0, 0, 0.38);
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: var(--app-background);
+}
+
+h1,
+h2,
+h3,
+strong {
+  letter-spacing: 0;
+}
+
+.page-shell {
+  gap: 0.9rem;
+  max-width: 100%;
+}
+
+.page-header {
+  min-width: 0;
+  align-items: center;
+  padding: 0.85rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.page-header h1,
+.page-header h2 {
+  margin-top: 0.15rem;
+  font-size: clamp(1.6rem, 2.4rem, 2.2rem);
+  line-height: 1.08;
+}
+
+.page-copy {
+  max-width: 68ch;
+  margin-top: 0.45rem;
+  color: var(--text-soft);
+  line-height: 1.55;
+}
+
+.eyebrow {
+  font-family: 'IBM Plex Mono', monospace;
+  letter-spacing: 0;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.surface-card,
+.metric-card,
+.mini-card,
+.stack-row,
+.task-card,
+.checkbox-tile,
+.avatar-chip,
+.inline-error,
+.empty-inline,
+.pill,
+.glass-badge {
+  border-radius: 8px;
+  box-shadow: none;
+}
+
+.surface-card,
+.metric-card {
+  padding: 0.95rem;
+  background: var(--surface);
+  border-color: var(--line);
+}
+
+.metric-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.metric-card {
+  min-height: 8.25rem;
+}
+
+.metric-card strong {
+  font-size: clamp(1.45rem, 2.5rem, 2.15rem);
+}
+
+input,
+select,
+textarea {
+  border-radius: 8px;
+  border-color: var(--line);
+  background: var(--field-background);
+}
+
+.primary-button,
+.ghost-button,
+.tag-button {
+  border-radius: 8px;
+  box-shadow: none;
+}
+
+.primary-button {
+  background: var(--brand);
+  border-color: var(--brand);
+}
+
+.section-grid--sidebar {
+  grid-template-columns: minmax(280px, 340px) minmax(0, 1fr);
+}
+
+.kanban-grid {
+  grid-template-columns: repeat(5, minmax(210px, 1fr));
+  gap: 0.75rem;
+}
+
+.bar-row {
+  grid-template-columns: minmax(110px, 170px) minmax(0, 1fr) auto;
+}
+
+@media (max-width: 1100px) {
+  .section-grid--sidebar,
+  .section-grid--two {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  .page-header {
+    align-items: flex-start;
+  }
+
+  .metric-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .kanban-grid {
+    grid-template-columns: repeat(5, minmax(240px, 82vw));
+  }
+}
+
+@media (max-width: 520px) {
+  .metric-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,68 +1,55 @@
-<div class="app-shell">
-  <aside class="shell-sidebar shell-sidebar--desktop">
-    <div class="workspace-switcher">
-      <a class="workspace-card" routerLink="/dashboard">
-        <span class="workspace-card__mark">{{ workspaceInitials() || 'PT' }}</span>
-        <span class="workspace-card__copy">
-          <small>Planno Tasks</small>
-          <strong>{{ authStore.user()?.tenantName || 'Workspace local' }}</strong>
-        </span>
-      </a>
-    </div>
+<div class="workspace-app">
+  <aside class="desktop-nav">
+    <a class="brand-panel" routerLink="/dashboard">
+      <span class="brand-logo">{{ workspaceInitials() || 'PT' }}</span>
+      <span>
+        <strong>Planno Tasks</strong>
+        <small>{{ authStore.user()?.tenantName || 'Workspace local' }}</small>
+      </span>
+    </a>
 
-    <div class="sidebar-scroll">
+    <nav class="nav-sections" aria-label="Navegacao principal">
       @for (group of navigationGroups(); track group.label) {
-        <section class="nav-group">
-          <p class="nav-group__label">{{ group.label }}</p>
-          <nav class="nav-stack">
-            @for (item of group.items; track item.path) {
-              <a [routerLink]="item.path" routerLinkActive="is-active" class="nav-link">
-                <span class="nav-link__icon">{{ item.icon }}</span>
-                <span class="nav-link__copy">
-                  <strong>{{ item.label }}</strong>
-                  <small>{{ item.caption }}</small>
-                </span>
-              </a>
-            }
-          </nav>
+        <section>
+          <p>{{ group.label }}</p>
+          @for (item of group.items; track item.path) {
+            <a [routerLink]="item.path" routerLinkActive="is-active" class="nav-item">
+              <span>{{ item.icon }}</span>
+              <strong>{{ item.label }}</strong>
+            </a>
+          }
         </section>
       }
-    </div>
+    </nav>
 
-    <div class="sidebar-foot">
-      <div class="workspace-health">
-        <span class="workspace-health__dot"></span>
-        <div>
-          <strong>{{ platformSubscriptionStore.isBillingAdminTenant() ? 'Painel interno' : 'Workspace ativo' }}</strong>
-          <small>{{ workspaceStatusCopy() }}</small>
-        </div>
+    <div class="account-panel">
+      <span class="account-panel__signal"></span>
+      <div>
+        <strong>{{ platformSubscriptionStore.isBillingAdminTenant() ? 'Admin Planno' : 'Operacao ativa' }}</strong>
+        <small>{{ workspaceStatusCopy() }}</small>
       </div>
     </div>
   </aside>
 
-  <div class="shell-frame">
-    <header class="shell-topbar">
-      <button class="mobile-nav-toggle icon-button" type="button" (click)="toggleSidebar()">Menu</button>
+  <div class="workspace-main">
+    <header class="top-command">
+      <button class="mobile-nav-button" type="button" (click)="toggleSidebar()">Menu</button>
 
-      <div class="page-title-block">
-        <div class="shell-breadcrumb">
-          <span>Workspace</span>
-          <span>/</span>
-          <strong>{{ activeNavigation().label }}</strong>
-        </div>
-        <p>{{ activeNavigation().caption }}</p>
+      <div class="route-title">
+        <small>Workspace / {{ activeNavigation().group }}</small>
+        <strong>{{ activeNavigation().label }}</strong>
       </div>
 
-      <label class="command-search">
+      <label class="global-command">
         <span>Buscar</span>
         <input
           type="search"
-          placeholder="Cliente, tarefa, projeto..."
+          placeholder="Digite cliente, tarefa, documento..."
           [value]="globalSearch()"
           (input)="updateGlobalSearch($event)"
         />
         @if (commandResults().length) {
-          <div class="command-results">
+          <div class="command-menu">
             @for (item of commandResults(); track item.path) {
               <a [routerLink]="item.path" (click)="clearGlobalSearch()">
                 <span>{{ item.icon }}</span>
@@ -74,67 +61,57 @@
         }
       </label>
 
-      <div class="shell-topbar__actions">
+      <div class="top-actions">
         @if (authStore.user(); as user) {
-          <a class="quick-action" routerLink="/tasks">Nova tarefa</a>
-          @if (platformSubscriptionStore.requiresAction()) {
-            <a class="quick-action quick-action--alert" routerLink="/workspace-plan">Meu plano</a>
-          }
-          <button class="icon-button" type="button" (click)="toggleTheme()">
+          <a class="button button--primary" routerLink="/tasks">Nova tarefa</a>
+          <button class="button button--quiet" type="button" (click)="toggleTheme()">
             {{ themeStore.mode() === 'dark' ? 'Claro' : 'Escuro' }}
           </button>
-          <div class="user-pill">
-            <span class="user-pill__avatar">{{ user.name.slice(0, 1) }}</span>
-            <span>
+          <div class="user-menu">
+            <span>{{ user.name.slice(0, 1) }}</span>
+            <div>
               <strong>{{ user.name }}</strong>
               <small>{{ user.email }}</small>
-            </span>
+            </div>
           </div>
-          <button class="icon-button" type="button" (click)="logout()">Sair</button>
+          <button class="button button--quiet" type="button" (click)="logout()">Sair</button>
         } @else {
-          <button class="primary-button" type="button" (click)="authStore.open()">Entrar</button>
+          <button class="button button--primary" type="button" (click)="authStore.open()">Entrar</button>
         }
       </div>
     </header>
 
-    <main class="main-shell">
+    <main class="content-viewport">
       <router-outlet></router-outlet>
     </main>
   </div>
 
-  <aside class="shell-sidebar shell-sidebar--mobile" [class.is-open]="sidebarOpen()">
-    <div class="workspace-switcher">
-      <a class="workspace-card" routerLink="/dashboard" (click)="closeSidebar()">
-        <span class="workspace-card__mark">{{ workspaceInitials() || 'PT' }}</span>
-        <span class="workspace-card__copy">
-          <small>Planno Tasks</small>
-          <strong>{{ authStore.user()?.tenantName || 'Workspace local' }}</strong>
-        </span>
-      </a>
-    </div>
+  <aside class="mobile-nav" [class.is-open]="sidebarOpen()">
+    <a class="brand-panel" routerLink="/dashboard" (click)="closeSidebar()">
+      <span class="brand-logo">{{ workspaceInitials() || 'PT' }}</span>
+      <span>
+        <strong>Planno Tasks</strong>
+        <small>{{ authStore.user()?.tenantName || 'Workspace local' }}</small>
+      </span>
+    </a>
 
-    <div class="sidebar-scroll">
+    <nav class="nav-sections" aria-label="Navegacao mobile">
       @for (group of navigationGroups(); track group.label) {
-        <section class="nav-group">
-          <p class="nav-group__label">{{ group.label }}</p>
-          <nav class="nav-stack">
-            @for (item of group.items; track item.path) {
-              <a [routerLink]="item.path" routerLinkActive="is-active" class="nav-link" (click)="closeSidebar()">
-                <span class="nav-link__icon">{{ item.icon }}</span>
-                <span class="nav-link__copy">
-                  <strong>{{ item.label }}</strong>
-                  <small>{{ item.caption }}</small>
-                </span>
-              </a>
-            }
-          </nav>
+        <section>
+          <p>{{ group.label }}</p>
+          @for (item of group.items; track item.path) {
+            <a [routerLink]="item.path" routerLinkActive="is-active" class="nav-item" (click)="closeSidebar()">
+              <span>{{ item.icon }}</span>
+              <strong>{{ item.label }}</strong>
+            </a>
+          }
         </section>
       }
-    </div>
+    </nav>
   </aside>
 
   @if (sidebarOpen()) {
-    <button class="sidebar-overlay" type="button" (click)="closeSidebar()"></button>
+    <button class="mobile-backdrop" type="button" (click)="closeSidebar()"></button>
   }
 
   <app-auth-modal></app-auth-modal>
