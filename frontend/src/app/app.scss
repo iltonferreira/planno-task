@@ -168,7 +168,7 @@
 
 .top-command {
   display: grid;
-  grid-template-columns: minmax(12rem, 0.8fr) minmax(18rem, 1.2fr) auto;
+  grid-template-columns: minmax(12rem, 1fr) minmax(18rem, 1.1fr) auto;
   gap: 0.75rem;
   align-items: center;
   min-width: 0;
@@ -178,7 +178,7 @@
 }
 
 .mobile-nav-button {
-  display: none;
+  display: none !important;
 }
 
 .route-title {
@@ -209,6 +209,7 @@
 .global-command {
   position: relative;
   min-width: 0;
+  max-width: 100%;
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
   gap: 0.55rem;
@@ -296,6 +297,7 @@
   align-items: center;
   gap: 0.5rem;
   min-width: 0;
+  overflow: hidden;
 }
 
 .button,
@@ -311,6 +313,7 @@
   color: var(--text-primary);
   font-weight: 750;
   text-decoration: none;
+  white-space: nowrap;
 }
 
 .button--primary {
@@ -361,7 +364,7 @@
 
 @media (max-width: 1180px) {
   .top-command {
-    grid-template-columns: minmax(10rem, 0.8fr) minmax(14rem, 1fr) auto;
+    grid-template-columns: minmax(10rem, 0.75fr) minmax(14rem, 1fr) auto;
   }
 
   .user-menu {
@@ -393,7 +396,7 @@
   }
 
   .mobile-nav-button {
-    display: inline-flex;
+    display: inline-flex !important;
   }
 
   .global-command,

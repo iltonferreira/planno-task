@@ -1,5 +1,49 @@
 :host {
   display: block;
+  min-width: 0;
+}
+
+.section-grid--sidebar {
+  grid-template-columns: minmax(300px, 340px) minmax(0, 1fr);
+  min-width: 0;
+}
+
+.surface-card {
+  min-width: 0;
+}
+
+.kanban-grid {
+  min-width: 0;
+  overflow-x: auto;
+  align-items: stretch;
+}
+
+.kanban-column {
+  min-width: 220px;
+}
+
+.field,
+.field span,
+.primary-button,
+.ghost-button,
+.empty-inline,
+.task-card,
+.task-card * {
+  min-width: 0;
+}
+
+.field span,
+.empty-inline,
+.task-card strong,
+.task-card p,
+.task-card__meta span {
+  overflow-wrap: anywhere;
+}
+
+select,
+input,
+textarea {
+  min-width: 0;
 }
 
 .tasks-header-actions {
@@ -7,6 +51,12 @@
   gap: 0.75rem;
   flex-wrap: wrap;
   justify-content: flex-end;
+}
+
+@media (max-width: 1280px) {
+  .section-grid--sidebar {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 720px) {

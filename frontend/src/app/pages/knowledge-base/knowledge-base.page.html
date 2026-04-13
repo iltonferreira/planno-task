@@ -1,9 +1,9 @@
 <section class="page-shell">
   <header class="page-header">
     <div>
-      <p class="eyebrow">Knowledge</p>
+      <p class="eyebrow">Conhecimento</p>
       <h1>Base de conhecimento</h1>
-      <p class="page-copy">Playbooks, SOPs e contexto operacional versionados no backend, com editor simples e busca por titulo ou conteudo.</p>
+      <p class="page-copy">Documente processos, decisoes e orientacoes internas para manter a equipe alinhada.</p>
     </div>
     <span class="pill pill--soft">{{ knowledgeBaseStore.items().length }} paginas</span>
   </header>
@@ -24,7 +24,7 @@
             <div class="stack-row stack-row--stretch">
               <div>
                 <strong>{{ page.title }}</strong>
-                <span>{{ page.wordCount }} palavras · {{ page.slug }}</span>
+                <span>{{ page.wordCount }} palavras - {{ page.slug }}</span>
               </div>
               <div class="row-actions">
                 <button class="tag-button" type="button" (click)="selectPage(page.id)">Editar</button>
@@ -49,7 +49,7 @@
       <div class="surface-head">
         <div>
           <p class="eyebrow">Editor</p>
-          <h2>{{ selectedPage()?.title || 'Draft de conhecimento' }}</h2>
+          <h2>{{ selectedPage()?.title || 'Nova pagina' }}</h2>
         </div>
       </div>
 
@@ -88,7 +88,7 @@
   <article class="surface-card note-preview">
     <div class="surface-head">
       <div>
-        <p class="eyebrow">Preview</p>
+        <p class="eyebrow">Visualizacao</p>
         <h2>{{ form.controls.title.value }}</h2>
       </div>
     </div>

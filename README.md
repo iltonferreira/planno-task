@@ -1,22 +1,50 @@
-# Planno Tasks
+﻿# 🚀 Planno Task
 
-Planno Tasks e uma plataforma fullstack multi-tenant para gestao operacional de clientes, projetos, tarefas, documentos, pagamentos, assinaturas e base de conhecimento. O produto foi preparado para venda com backend Spring Boot, frontend Angular e integracoes opcionais com Mercado Pago, Google Drive, Google Calendar e SMTP.
+> Plataforma fullstack para freelancers centralizarem tarefas, projetos, clientes, pagamentos, assinaturas, documentos e indicadores financeiros em um unico sistema.
 
-## Principais recursos
+![Java](https://img.shields.io/badge/Java-21-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
+![Spring Boot](https://img.shields.io/badge/Spring_Boot-4-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)
+![Angular](https://img.shields.io/badge/Angular-21-DD0031?style=for-the-badge&logo=angular&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-ready-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
+![JWT](https://img.shields.io/badge/Auth-JWT-111827?style=for-the-badge)
+![API](https://img.shields.io/badge/API-REST-0A7C62?style=for-the-badge)
 
-- Autenticacao JWT com isolamento por tenant/workspace.
-- Dashboard operacional e financeiro.
-- Gestao de clientes, projetos e tarefas em Kanban.
-- Agenda de tarefas com integracao opcional ao Google Calendar.
-- Upload, download e organizacao de documentos via Google Drive.
-- Base de conhecimento interna por workspace.
-- Pagamentos avulsos e assinaturas recorrentes via Mercado Pago.
-- Painel interno para provisionar workspaces pagos ou cortesia.
-- Notificacoes por email para tarefas, projetos, pagamentos e assinaturas.
+## ✨ Visao Geral
 
-## Stack
+Planno Task foi desenhado para resolver um problema comum de freelancers e pequenos prestadores de servico: a gestao do negocio fica espalhada entre planilhas, Trello, WhatsApp, banco, Drive e plataformas de pagamento.
 
-Backend:
+A proposta e transformar essa operacao em um produto SaaS simples e objetivo, onde o freelancer acompanha entregas, clientes, receitas, assinaturas, documentos e agenda em uma experiencia unica.
+
+**Valor principal:** menos retrabalho operacional, mais visibilidade financeira e mais controle sobre a relacao com clientes.
+
+## 🖼️ Demonstracao / Preview
+
+> Substitua os caminhos abaixo por screenshots reais do projeto antes de publicar o repositorio.
+
+![Dashboard do Planno Task](docs/screenshots/dashboard.png)
+
+![Kanban de tarefas](docs/screenshots/tasks-kanban.png)
+
+![Gestao de documentos](docs/screenshots/documents.png)
+
+## ✅ Funcionalidades
+
+- **Dashboard financeiro e operacional:** indicadores de receita, despesas, clientes, projetos e tarefas em uma tela executiva.
+- **Kanban de tarefas:** acompanhamento visual de prioridades, responsaveis, participantes e prazos.
+- **Gestao de projetos:** organizacao de escopo, cliente, responsavel, orcamento e janela de execucao.
+- **CRM de clientes:** cadastro de contatos, documentos e historico financeiro por workspace.
+- **Pagamentos e vendas avulsas:** registro de contas a pagar, receitas pontuais e movimentacoes financeiras.
+- **Assinaturas recorrentes:** controle de planos e status de assinatura.
+- **Integracao Mercado Pago:** base para checkout, cobrancas e webhooks de pagamento.
+- **Integracao Google Drive:** organizacao de arquivos por cliente, projeto, financeiro, base de conhecimento ou geral.
+- **Agenda com Google Calendar:** leitura e sincronizacao de tarefas com calendario externo.
+- **Base de conhecimento:** documentacao interna de processos, decisoes e playbooks.
+- **Notificacoes por e-mail:** comunicacoes para tarefas, projetos, pagamentos e assinaturas.
+- **Autenticacao JWT:** login seguro, isolamento por workspace e protecao das rotas da API.
+
+## 🧱 Stack Tecnologica
+
+### Backend
 
 - Java 21
 - Spring Boot 4
@@ -24,173 +52,213 @@ Backend:
 - Spring Security
 - Spring Data JPA / Hibernate
 - Flyway
-- PostgreSQL
 - Lombok
 - Auth0 Java JWT
+- Springdoc OpenAPI / Swagger UI
 
-Frontend:
+### Frontend
 
 - Angular 21
-- Standalone components
+- Standalone Components
 - Angular Router
 - HttpClient
 - Signals
 - SCSS
 - Vitest
 
-Infra:
+### Banco de Dados
 
-- Dockerfile para o backend
-- Blueprint Render em `render.yaml`
-- Frontend estatico servido por build Angular
-- Banco PostgreSQL externo, como Neon ou Render PostgreSQL
+- PostgreSQL para ambientes reais
+- H2 persistente para desenvolvimento local e demonstracao
+- Migrations versionadas com Flyway
 
-## Estrutura do projeto
+### Integracoes
+
+- Mercado Pago para pagamentos e assinaturas
+- Google Drive para armazenamento e organizacao de documentos
+- Google Calendar para agenda e sincronizacao de tarefas
+- SMTP para envio de notificacoes por e-mail
+
+## 🏗️ Arquitetura
+
+O projeto segue uma arquitetura fullstack separada por responsabilidades:
 
 ```text
-.
-|-- src/main/java/com/planno/dash_api
-|   |-- config          # Spring Security, CORS e Jackson
-|   |-- controller      # APIs HTTP
-|   |-- dto             # requests, responses e mappers
-|   |-- entity          # entidades JPA
-|   |-- enums           # enums de dominio
-|   |-- infra           # JWT, filtro de seguranca, tenant context e exceptions
-|   |-- repository      # repositories Spring Data
-|   `-- service         # regras de negocio e integracoes
-|-- src/main/resources
-|   |-- application.properties
-|   |-- db/migration    # migrations Flyway
-|   `-- templates/email # templates HTML de email
-|-- frontend            # aplicacao Angular
-|-- docs                # documentacao tecnica complementar
-|-- Dockerfile
-|-- render.yaml
-`-- DEPLOY_RENDER.md
+Frontend Angular
+  |
+  | HTTP + JWT
+  v
+Backend Spring Boot
+  |
+  | JPA / Flyway
+  v
+PostgreSQL / H2
+  |
+  +--> Mercado Pago
+  +--> Google Drive
+  +--> Google Calendar
+  +--> SMTP
 ```
 
-## Seguranca aplicada
+No backend, a estrutura e organizada por camadas:
 
-Esta versao recebeu endurecimentos importantes para producao:
+- **Controllers:** entrada HTTP e contratos REST.
+- **DTOs e Mappers:** separacao entre modelo de dominio e payloads publicos.
+- **Services:** regras de negocio, validacoes e orquestracao das integracoes.
+- **Repositories:** persistencia com Spring Data JPA.
+- **Entities:** modelo relacional do dominio.
+- **Infra:** JWT, filtros de seguranca, handlers de erro e contexto do workspace.
 
-- `JWT_SECRET` sem fallback fraco em producao.
-- Validacao de tamanho minimo do segredo JWT.
-- Issuer JWT configuravel por ambiente.
-- Expiracao JWT configuravel.
-- Parser de `Authorization: Bearer` mais estrito.
-- Resposta `401` controlada para token invalido, expirado ou usuario removido.
-- Limpeza explicita do `SecurityContext` e do `TenantContext` ao final da request.
-- CORS bloqueia `*` quando credenciais estao habilitadas.
-- Headers HTTP defensivos no backend: CSP restritiva para API, `X-Frame-Options`, HSTS e referrer policy.
-- Handler global nao vaza mensagem interna de `RuntimeException`.
-- Webhook Mercado Pago valida assinatura com comparacao constante e limite de idade para reduzir replay.
-- Upload de documentos tem limite configuravel e sanitizacao de nome de arquivo.
-- Download usa `Content-Disposition` seguro com filename codificado.
+No frontend, a aplicacao usa componentes standalone e stores por dominio, mantendo cada area do produto isolada: tarefas, clientes, projetos, documentos, pagamentos, dashboard e autenticacao.
 
-Importante: o frontend ainda guarda o JWT em `localStorage` para preservar sessao apos refresh. Isso e comum em SPAs simples, mas exige CSP forte no host do frontend, revisao constante contra XSS e evitar qualquer uso de HTML dinamico inseguro.
+## 🔌 Exemplos de API
 
-## Variaveis de ambiente
+### Autenticacao
 
-Obrigatorias em producao:
+```http
+POST /api/auth/login
+Content-Type: application/json
+```
+
+```json
+{
+  "email": "teste@plannotasks.local",
+  "password": "planno123"
+}
+```
+
+Resposta:
+
+```json
+{
+  "token": "jwt-token",
+  "user": {
+    "id": 1,
+    "name": "Usuario de Teste",
+    "email": "teste@plannotasks.local",
+    "tenantName": "Workspace local"
+  }
+}
+```
+
+### Criar Cliente
+
+```http
+POST /api/clients
+Authorization: Bearer jwt-token
+Content-Type: application/json
+```
+
+```json
+{
+  "name": "Studio Aurora",
+  "email": "contato@studioaurora.com",
+  "phone": "+55 11 99999-9999",
+  "document": "12.345.678/0001-90"
+}
+```
+
+### Criar Tarefa
+
+```http
+POST /api/tasks
+Authorization: Bearer jwt-token
+Content-Type: application/json
+```
+
+```json
+{
+  "title": "Revisar contrato e publicar cronograma",
+  "description": "Validar entregas, responsaveis e proximos marcos do projeto.",
+  "status": "BACKLOG",
+  "priority": "MEDIUM",
+  "projectId": 1,
+  "responsibleUserId": 1,
+  "participantUserIds": [1],
+  "dueDate": "2026-04-30"
+}
+```
+
+### Health Check
+
+```http
+GET /api/health
+```
+
+```json
+{
+  "status": "UP"
+}
+```
+
+Documentacao local da API:
+
+```text
+http://localhost:8080/swagger-ui.html
+http://localhost:8080/v3/api-docs
+```
+
+## ▶️ Como Rodar o Projeto
+
+### Pre-requisitos
+
+- Java 21
+- Node.js 20+
+- npm
+- PostgreSQL, caso queira rodar fora do perfil H2
+
+### 1. Clonar o repositorio
+
+```bash
+git clone https://github.com/iltonferreira/planno-task.git
+cd planno-task
+```
+
+### 2. Configurar variaveis de ambiente
+
+Use o arquivo `.env.example` como referencia. Para desenvolvimento rapido, o perfil `h2` exige apenas um segredo JWT local.
+
+Exemplo minimo:
 
 ```env
-APP_SECURITY_PRODUCTION=true
-DB_URL=jdbc:postgresql://HOST:5432/DB?sslmode=require
-DB_USERNAME=usuario
-DB_PASSWORD=senha
-JWT_SECRET=gere-um-segredo-com-32-caracteres-ou-mais
-CORS_ALLOWED_ORIGINS=https://seu-frontend.com
-PLATFORM_BILLING_ADMIN_TENANT_SLUG=slug-do-tenant-interno
+APP_SECURITY_PRODUCTION=false
+PORT=8080
+CORS_ALLOWED_ORIGINS=http://localhost:4200
+OPENAPI_ENABLED=true
+
+SPRING_PROFILES_ACTIVE=h2
+JWT_SECRET=change-me-use-at-least-32-characters
+
+MERCADO_PAGO_ENABLED=false
+GOOGLE_DRIVE_ENABLED=false
+GOOGLE_CALENDAR_ENABLED=false
+MAIL_ENABLED=false
 ```
 
-Recomendadas:
+Para PostgreSQL:
 
 ```env
-JWT_ISSUER=planno-tasks-api
-JWT_EXPIRATION_HOURS=2
-MAX_UPLOAD_SIZE_BYTES=10485760
-JPA_SHOW_SQL=false
+DB_URL=jdbc:postgresql://localhost:5432/dash_api
+DB_USERNAME=postgres
+DB_PASSWORD=postgres
 ```
 
-Mercado Pago:
-
-```env
-MERCADO_PAGO_ENABLED=true
-MERCADO_PAGO_ACCESS_TOKEN=...
-MERCADO_PAGO_WEBHOOK_SECRET=...
-MERCADO_PAGO_SUCCESS_URL=https://seu-frontend.com/payments?status=success
-MERCADO_PAGO_PENDING_URL=https://seu-frontend.com/payments?status=pending
-MERCADO_PAGO_FAILURE_URL=https://seu-frontend.com/payments?status=failure
-MERCADO_PAGO_SUBSCRIPTION_BACK_URL=https://seu-frontend.com/subscriptions
-PLATFORM_BILLING_NOTIFICATION_URL=https://sua-api.com/api/platform-billing/webhooks/mercado-pago
-PLATFORM_BILLING_MANAGE_URL=https://seu-frontend.com/workspace-plan
-```
-
-Google Drive:
-
-```env
-GOOGLE_DRIVE_ENABLED=true
-GOOGLE_DRIVE_CLIENT_ID=...
-GOOGLE_DRIVE_CLIENT_SECRET=...
-GOOGLE_DRIVE_REDIRECT_URI=https://sua-api.com/api/integrations/google-drive/callback
-GOOGLE_DRIVE_ROOT_FOLDER_ID=root
-GOOGLE_DRIVE_FRONTEND_SUCCESS_URL=https://seu-frontend.com/documents?googleDrive=connected
-GOOGLE_DRIVE_FRONTEND_ERROR_URL=https://seu-frontend.com/documents?googleDrive=error
-```
-
-Google Calendar:
-
-```env
-GOOGLE_CALENDAR_ENABLED=true
-GOOGLE_CALENDAR_CLIENT_ID=...
-GOOGLE_CALENDAR_CLIENT_SECRET=...
-GOOGLE_CALENDAR_REDIRECT_URI=https://sua-api.com/api/integrations/google-calendar/callback
-GOOGLE_CALENDAR_FRONTEND_SUCCESS_URL=https://seu-frontend.com/calendar?googleCalendar=connected
-GOOGLE_CALENDAR_FRONTEND_ERROR_URL=https://seu-frontend.com/calendar?googleCalendar=error
-```
-
-Email:
-
-```env
-MAIL_ENABLED=true
-MAIL_FROM=no-reply@seudominio.com
-MAIL_HOST=smtp.seudominio.com
-MAIL_PORT=587
-MAIL_USERNAME=...
-MAIL_PASSWORD=...
-MAIL_SMTP_AUTH=true
-MAIL_SMTP_STARTTLS=true
-```
-
-## Rodando localmente
-
-Backend:
+### 3. Rodar o backend
 
 ```powershell
-$env:DB_URL="jdbc:postgresql://localhost:5432/dash_api"
-$env:DB_USERNAME="postgres"
-$env:DB_PASSWORD="<senha-local>"
-$env:JWT_SECRET="<segredo-local-com-32-caracteres-ou-mais>"
-$env:CORS_ALLOWED_ORIGINS="http://localhost:4200"
-.\mvnw.cmd spring-boot:run
-```
-
-Backend com H2 persistente para teste local:
-
-```powershell
+cd backend
 $env:SPRING_PROFILES_ACTIVE="h2"
-$env:JWT_SECRET="<segredo-local-com-32-caracteres-ou-mais>"
+$env:JWT_SECRET="change-me-use-at-least-32-characters"
 .\mvnw.cmd spring-boot:run
 ```
 
-O perfil `h2` grava o banco em `data/planno-tasks.mv.db`, cria as tabelas com Hibernate e provisiona um usuario de teste:
+API local:
 
 ```text
-E-mail: teste@plannotasks.local
-Senha: planno123
+http://localhost:8080
 ```
 
-Frontend:
+### 4. Rodar o frontend
 
 ```powershell
 cd frontend
@@ -198,55 +266,165 @@ npm install
 npm run start
 ```
 
-A API sobe por padrao em `http://localhost:8080` e o Angular em `http://localhost:4200`.
+Aplicacao local:
 
-## Build e validacao
-
-Backend:
-
-```powershell
-.\mvnw.cmd test
-.\mvnw.cmd -DskipTests package
+```text
+http://localhost:4200
 ```
 
-Frontend:
+### 5. Usuario de demonstracao
 
-```powershell
-cd frontend
-npm run build
-npm test
+No perfil `h2`, a aplicacao provisiona um usuario local:
+
+```text
+E-mail: teste@plannotasks.local
+Senha: planno123
 ```
 
-## Deploy no Render
+## 📁 Estrutura do Projeto
 
-O arquivo `render.yaml` define:
+```text
+.
+|-- backend
+|   |-- src/main/java/com/planno/dash_api
+|   |   |-- config
+|   |   |-- controller
+|   |   |-- dto
+|   |   |-- entity
+|   |   |-- enums
+|   |   |-- infra
+|   |   |-- repository
+|   |   `-- service
+|   |-- src/main/resources
+|   |   |-- db/migration
+|   |   |-- templates/email
+|   |   |-- application.properties
+|   |   `-- application-h2.properties
+|   |-- pom.xml
+|   `-- mvnw.cmd
+|-- frontend
+|   |-- src/app
+|   |-- public
+|   |-- scripts
+|   |-- angular.json
+|   `-- package.json
+|-- docs
+|-- .env.example
+|-- .gitignore
+`-- README.md
+```
 
-- `planno-api`: backend Docker
-- `planno-web`: frontend Angular estatico
+## 🔗 Integracoes
 
-Antes de ativar venda, confira no painel do Render:
+### Mercado Pago
 
-- `APP_SECURITY_PRODUCTION=true`
-- `JWT_SECRET` forte e gerado fora do repositorio
-- `CORS_ALLOWED_ORIGINS` com o dominio real do frontend
-- banco PostgreSQL com SSL
-- webhooks Mercado Pago apontando para HTTPS publico
-- redirects OAuth do Google cadastrados exatamente como as URLs publicas
+O Mercado Pago e usado como base para pagamentos avulsos e assinaturas recorrentes. A API possui configuracoes para:
 
-Mais detalhes estao em `DEPLOY_RENDER.md`.
+- criar links de pagamento;
+- receber webhooks;
+- validar assinatura do webhook;
+- atualizar status de pagamento;
+- acompanhar assinaturas e receitas recorrentes.
 
-## Checklist antes de vender
+Variaveis principais:
 
-- Rodar build/testes backend e frontend.
-- Usar dominio HTTPS real para API e frontend.
-- Configurar `APP_SECURITY_PRODUCTION=true`.
-- Rotacionar `JWT_SECRET` se ele ja foi usado em ambiente inseguro.
-- Configurar webhook secret do Mercado Pago.
-- Testar pagamento avulso e assinatura recorrente em ambiente controlado.
-- Revisar politicas de privacidade e termos, pois o sistema lida com dados de clientes, pagamentos e documentos.
-- Garantir backup do PostgreSQL.
-- Configurar logs e alertas para falhas de login, webhooks e integracoes externas.
+```env
+MERCADO_PAGO_ENABLED=true
+MERCADO_PAGO_ACCESS_TOKEN=...
+MERCADO_PAGO_WEBHOOK_SECRET=...
+MERCADO_PAGO_SUCCESS_URL=http://localhost:4200/payments?status=success
+MERCADO_PAGO_FAILURE_URL=http://localhost:4200/payments?status=failure
+```
 
-## Licenca e uso comercial
+### Google Drive
 
-Este repositorio representa a base comercial do Planno Tasks. Antes de criar uma copia publica para portfolio, remova credenciais, dados de clientes, URLs privadas e qualquer material visual ou texto que voce nao queira associar ao produto vendido.
+O Google Drive e usado para organizar documentos do workspace por contexto de negocio:
+
+- clientes;
+- projetos;
+- financeiro;
+- base de conhecimento;
+- arquivos gerais.
+
+Variaveis principais:
+
+```env
+GOOGLE_DRIVE_ENABLED=true
+GOOGLE_DRIVE_CLIENT_ID=...
+GOOGLE_DRIVE_CLIENT_SECRET=...
+GOOGLE_DRIVE_REDIRECT_URI=http://localhost:8080/api/integrations/google-drive/callback
+```
+
+### Google Calendar
+
+A integracao com Google Calendar permite conectar uma agenda, visualizar eventos e sincronizar tarefas com datas de entrega.
+
+```env
+GOOGLE_CALENDAR_ENABLED=true
+GOOGLE_CALENDAR_CLIENT_ID=...
+GOOGLE_CALENDAR_CLIENT_SECRET=...
+GOOGLE_CALENDAR_REDIRECT_URI=http://localhost:8080/api/integrations/google-calendar/callback
+```
+
+## 🔐 Seguranca
+
+- Autenticacao baseada em JWT.
+- Rotas protegidas com Spring Security.
+- Isolamento por tenant/workspace.
+- Segredo JWT obrigatorio e sem fallback fraco em producao.
+- CORS configuravel por ambiente.
+- OpenAPI pode ser desabilitado em producao com `OPENAPI_ENABLED=false`.
+- Integracoes externas ficam desativadas por padrao.
+- Webhooks do Mercado Pago possuem validacao de assinatura.
+- Upload de documentos possui limite de tamanho e sanitizacao de nome.
+- Handler global evita vazar detalhes internos em erros genericos.
+
+> Observacao: o frontend usa `localStorage` para persistir sessao JWT, uma escolha comum em SPAs. Em producao, isso exige atencao extra com CSP, revisao contra XSS e evitar HTML dinamico inseguro.
+
+## 🧭 Roadmap
+
+- [ ] Pagina publica de checkout para clientes finais.
+- [ ] Relatorios financeiros exportaveis em CSV/PDF.
+- [ ] Automacoes de lembretes por e-mail.
+- [ ] Integracao com notas fiscais.
+- [ ] Permissoes granulares por papel no workspace.
+- [ ] Auditoria de eventos importantes.
+- [ ] Templates de projetos recorrentes.
+- [ ] Testes end-to-end para fluxos criticos.
+
+## 👤 Casos de Uso
+
+- **Freelancer solo:** controla entregas, clientes, prazos e recebimentos em uma unica plataforma.
+- **Consultor recorrente:** acompanha assinaturas, pagamentos mensais e documentos por cliente.
+- **Pequena agencia:** distribui tarefas por responsavel e acompanha carga de trabalho.
+- **Prestador B2B:** organiza contratos, propostas e arquivos de cada projeto no Drive.
+- **Operacao em crescimento:** usa dashboard financeiro para entender receita, despesas e pendencias.
+
+## 💡 Por Que Esse Projeto Importa
+
+Planno Task nao e apenas uma API CRUD. Ele representa um problema real de negocio: freelancers geralmente perdem tempo alternando entre ferramentas desconectadas e deixam dinheiro, prazos e informacoes importantes espalhados.
+
+Ao centralizar gestao operacional e financeira, o sistema ajuda a:
+
+- reduzir perda de contexto;
+- melhorar previsibilidade de receita;
+- dar visibilidade sobre entregas em andamento;
+- profissionalizar a relacao com clientes;
+- criar uma base tecnica pronta para evoluir para um SaaS.
+
+Para recrutadores, o projeto demonstra dominio de backend moderno com Spring Boot, seguranca, integracoes externas, arquitetura em camadas, frontend Angular e preocupacao com produto.
+
+Para clientes, demonstra uma visao clara: transformar gestao freelancer em um fluxo simples, rastreavel e escalavel.
+
+## 👨‍💻 Autor
+
+Desenvolvido por **Ilton Ferreira**.
+
+Projeto criado com foco em arquitetura fullstack, integracoes reais e apresentacao profissional para portfolio.
+
+GitHub: [github.com/iltonferreira](https://github.com/iltonferreira)
+
+## 📄 Licenca
+
+Este projeto esta disponivel para fins de estudo e portfolio. Caso deseje usar comercialmente, revise a licenca do repositorio e as credenciais das integracoes externas antes de publicar em producao.
+

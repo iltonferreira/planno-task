@@ -3,7 +3,7 @@
     <div>
       <p class="eyebrow">Central de comando</p>
       <h1>Bom trabalho, {{ userName() }}</h1>
-      <p>Operacao, receita, clientes e prioridades em uma tela limpa para tomada de decisao.</p>
+      <p>Indicadores de clientes, entregas e financeiro reunidos para acompanhar a saude do workspace.</p>
     </div>
     <div class="dashboard-hero__actions">
       <a class="primary-button" routerLink="/tasks">Nova tarefa</a>
@@ -62,7 +62,7 @@
       <div class="panel-head">
         <div>
           <p class="eyebrow">Execucao</p>
-          <h2>Kanban</h2>
+          <h2>Distribuicao das tarefas</h2>
         </div>
       </div>
       <div class="compact-list">
@@ -70,7 +70,7 @@
           <div class="progress-line">
             <div>
               <strong>{{ item.status }}</strong>
-              <small>{{ item.count }} cards</small>
+              <small>{{ item.count }} tarefas</small>
             </div>
             <span><i [style.width]="item.width"></i></span>
           </div>
@@ -103,7 +103,7 @@
       <div class="panel-head">
         <div>
           <p class="eyebrow">Clientes</p>
-          <h2>Maior LTV</h2>
+          <h2>Clientes por receita</h2>
         </div>
       </div>
       @if (revenueLeaders().length) {
@@ -127,7 +127,7 @@
       <div class="panel-head">
         <div>
           <p class="eyebrow">Financeiro</p>
-          <h2>Pipeline</h2>
+          <h2>Previsao de caixa</h2>
         </div>
       </div>
       <div class="finance-split">

@@ -23,11 +23,11 @@ export class DocumentsPageComponent {
 
   readonly queuedFiles = signal<File[]>([]);
   readonly folders = [
-    '/Clients/{name}',
-    '/Projects/{name}',
-    '/Finance',
-    '/KnowledgeBase/{slug}',
-    '/General'
+    'Clientes / Nome do cliente',
+    'Projetos / Nome do projeto',
+    'Financeiro',
+    'Base de conhecimento / Categoria',
+    'Geral'
   ];
   readonly relationType = signal('FINANCE');
   readonly driveStatus = computed(() => this.documentsStore.integrationStatus());
@@ -127,5 +127,17 @@ export class DocumentsPageComponent {
 
   formatQueuedFileSize(file: File): string {
     return `${Math.max(1, Math.round(file.size / 1024))} KB`;
+  }
+
+  relationTypeLabel(type: string): string {
+    const labels: Record<string, string> = {
+      CLIENT: 'Cliente',
+      PROJECT: 'Projeto',
+      FINANCE: 'Financeiro',
+      KNOWLEDGE_BASE: 'Base de conhecimento',
+      GENERAL: 'Geral'
+    };
+
+    return labels[type] ?? type;
   }
 }

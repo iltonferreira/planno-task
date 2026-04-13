@@ -1,9 +1,20 @@
-HELP.md
 target/
 data/
 *.log
 *-err.log
 *-out.log
+.env
+.env.*
+!.env.example
+frontend/.env
+frontend/.env.*
+!frontend/.env.example
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+frontend/coverage/
+frontend/*-err.log
+frontend/*-out.log
 *.class
 *.ctxt
 *.jar
@@ -16,7 +27,7 @@ data/
 .mtj.tmp/
 hs_err_pid*
 replay_pid*
-.mvn/wrapper/maven-wrapper.jar
+backend/.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
 

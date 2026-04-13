@@ -4,7 +4,7 @@
       <span class="brand-logo">{{ workspaceInitials() || 'PT' }}</span>
       <span>
         <strong>Planno Tasks</strong>
-        <small>{{ authStore.user()?.tenantName || 'Workspace local' }}</small>
+        <small>{{ authStore.user()?.tenantName || 'Ambiente de demonstracao' }}</small>
       </span>
     </a>
 
@@ -41,10 +41,10 @@
       </div>
 
       <label class="global-command">
-        <span>Buscar</span>
+        <span>Busca</span>
         <input
           type="search"
-          placeholder="Digite cliente, tarefa, documento..."
+          placeholder="Buscar clientes, tarefas e documentos"
           [value]="globalSearch()"
           (input)="updateGlobalSearch($event)"
         />
@@ -91,7 +91,7 @@
       <span class="brand-logo">{{ workspaceInitials() || 'PT' }}</span>
       <span>
         <strong>Planno Tasks</strong>
-        <small>{{ authStore.user()?.tenantName || 'Workspace local' }}</small>
+        <small>{{ authStore.user()?.tenantName || 'Ambiente de demonstracao' }}</small>
       </span>
     </a>
 

@@ -66,15 +66,15 @@ export class App {
   readonly sidebarOpen = signal(false);
   readonly globalSearch = signal('');
   private readonly baseNavigation: NavigationItem[] = [
-    { path: '/dashboard', label: 'Home', caption: 'Visao geral da operacao', group: 'Operacao', icon: 'H' },
-    { path: '/tasks', label: 'Tarefas', caption: 'Kanban do dia a dia', group: 'Operacao', icon: 'T' },
+    { path: '/dashboard', label: 'Inicio', caption: 'Visao geral do workspace', group: 'Operacao', icon: 'I' },
+    { path: '/tasks', label: 'Tarefas', caption: 'Quadro de acompanhamento', group: 'Operacao', icon: 'T' },
     { path: '/calendar', label: 'Calendario', caption: 'Agenda pessoal de tarefas', group: 'Operacao', icon: 'C' },
     { path: '/projects', label: 'Projetos', caption: 'Roadmap de entrega', group: 'Operacao', icon: 'P' },
     { path: '/clients', label: 'Clientes', caption: 'Relacionamentos e CRM', group: 'Comercial', icon: 'R' },
     { path: '/documents', label: 'Documentos', caption: 'Arquivos e contratos', group: 'Comercial', icon: 'D' },
     { path: '/knowledge-base', label: 'Base de conhecimento', caption: 'Playbooks e notas internas', group: 'Comercial', icon: 'B' },
     { path: '/workspace-plan', label: 'Meu plano', caption: 'Assinatura da plataforma', group: 'Financeiro', icon: 'M' },
-    { path: '/payments', label: 'Pagamentos', caption: 'Contas a pagar e recebiveis', group: 'Financeiro', icon: '$' },
+    { path: '/payments', label: 'Pagamentos', caption: 'Contas a pagar e a receber', group: 'Financeiro', icon: '$' },
     {
       path: '/workspace-admin',
       label: 'Provisionamento',
@@ -93,11 +93,11 @@ export class App {
   );
   readonly workspaceStatusCopy = computed(() => {
     if (!this.authStore.user()) {
-      return 'Entre para liberar o workspace.';
+      return 'Entre para acessar o workspace.';
     }
 
     if (this.platformSubscriptionStore.isComplimentaryTenant()) {
-      return 'Workspace liberado em cortesia pela equipe Planno.';
+      return 'Workspace de demonstracao ativo.';
     }
 
     return this.platformSubscriptionStore.subscription()?.status === 'ACTIVE'

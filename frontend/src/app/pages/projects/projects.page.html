@@ -1,9 +1,9 @@
 <section class="page-shell">
   <header class="page-header">
     <div>
-      <p class="eyebrow">Delivery</p>
+      <p class="eyebrow">Projetos</p>
       <h1>Projetos</h1>
-      <p class="page-copy">Planeje escopo, owner, cliente e janela de execucao com a mesma linguagem visual do restante do sistema.</p>
+      <p class="page-copy">Organize escopo, cliente, responsavel e prazo para acompanhar cada entrega do inicio ao fim.</p>
     </div>
     <span class="pill pill--soft">{{ projectsStore.items().length }} projetos registrados</span>
   </header>
@@ -13,7 +13,7 @@
       <div class="surface-head">
         <div>
           <p class="eyebrow">Novo projeto</p>
-          <h2>Setup operacional</h2>
+          <h2>Informacoes do projeto</h2>
         </div>
       </div>
 
@@ -38,7 +38,7 @@
         </label>
 
         <label class="field">
-          <span>Budget</span>
+          <span>Orcamento</span>
           <input type="number" min="0" formControlName="budget" />
         </label>
 
@@ -53,9 +53,9 @@
         </label>
 
         <label class="field">
-          <span>Owner</span>
+          <span>Responsavel</span>
           <select formControlName="ownerUserId">
-            <option [value]="0">Sem owner</option>
+            <option [value]="0">Sem responsavel</option>
             @for (user of usersStore.items(); track user.id) {
               <option [value]="user.id">{{ user.name }}</option>
             }
@@ -102,13 +102,13 @@
               <p>{{ project.description || 'Sem descricao registrada.' }}</p>
               <div class="mini-card__meta">
                 <span>{{ project.clientName || 'Sem cliente' }}</span>
-                <span>{{ project.ownerUser?.name || 'Sem owner' }}</span>
+                <span>{{ project.ownerUser?.name || 'Sem responsavel' }}</span>
               </div>
             </div>
           }
         </div>
       } @else {
-        <div class="empty-inline">Sem projetos cadastrados. Use o painel lateral para iniciar a operacao.</div>
+        <div class="empty-inline">Nenhum projeto cadastrado ainda. Crie o primeiro para acompanhar entregas e prazos.</div>
       }
     </article>
   </div>

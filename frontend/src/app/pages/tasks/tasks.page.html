@@ -3,7 +3,7 @@
     <div>
       <p class="eyebrow">Kanban</p>
       <h1>Tarefas</h1>
-      <p class="page-copy">Controle o quadro, o responsavel principal, os participantes e as mudancas de status em uma interface pronta para operacao diaria.</p>
+      <p class="page-copy">Acompanhe prioridades, responsaveis e prazos em um quadro simples para a rotina da equipe.</p>
     </div>
     <div class="tasks-header-actions">
       <a class="ghost-button" routerLink="/calendar">Abrir calendario</a>
@@ -17,8 +17,8 @@
     <article class="surface-card">
       <div class="surface-head">
         <div>
-          <p class="eyebrow">Nova task</p>
-          <h2>Cadastro e atribuicao</h2>
+          <p class="eyebrow">Nova tarefa</p>
+          <h2>Adicionar ao quadro</h2>
         </div>
       </div>
 
@@ -125,7 +125,7 @@
                   <span>{{ task.dueDate || 'Sem prazo' }}</span>
                 </div>
                 <strong>{{ task.title }}</strong>
-                <p>{{ task.description || 'Sem descricao.' }}</p>
+                <p>{{ task.description || 'Sem descricao' }}</p>
                 <div class="task-card__meta">
                   <span>{{ task.projectName || 'Sem projeto' }}</span>
                   <span>{{ task.responsibleUser?.name || 'Sem responsavel' }}</span>

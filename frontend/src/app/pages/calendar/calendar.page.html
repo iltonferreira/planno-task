@@ -10,7 +10,7 @@
     </div>
 
     <div class="calendar-header-actions">
-      <a class="ghost-button" routerLink="/tasks">Abrir Kanban</a>
+      <a class="ghost-button" routerLink="/tasks">Abrir quadro</a>
       <span class="pill">{{ authStore.user()?.name || 'Minha agenda' }}</span>
     </div>
   </header>
@@ -45,7 +45,7 @@
     <div class="surface-head">
       <div>
         <p class="eyebrow">Integracao</p>
-        <h2>Google Calendar OAuth</h2>
+        <h2>Conexao com Google Calendar</h2>
       </div>
       @if (googleCalendarStore.status()?.connected) {
         <span class="pill pill--success">Conectado</span>
@@ -54,7 +54,7 @@
       } @else if (googleCalendarStore.status() && !googleCalendarStore.status()?.enabled) {
         <span class="pill pill--danger">Integracao desativada</span>
       } @else {
-        <span class="pill pill--danger">Backend nao configurado</span>
+        <span class="pill pill--danger">Configuracao pendente</span>
       }
     </div>
 
@@ -70,13 +70,13 @@
           </strong>
           <span>
             @if (googleCalendarStore.status()?.connected) {
-              Eventos do calendario {{ googleCalendarStore.status()?.defaultCalendarId || 'primary' }} serao mostrados aqui e podem virar tarefas no Planno.
+              Eventos da agenda conectada serao mostrados aqui e podem virar tarefas no Planno.
             } @else if (googleCalendarStore.status()?.configured) {
               Conecte sua conta para ver eventos do Google e publicar tarefas da plataforma na sua agenda.
             } @else if (googleCalendarStore.status() && !googleCalendarStore.status()?.enabled) {
-              A integracao do Google Calendar esta desativada no backend atual. No Render, ative GOOGLE_CALENDAR_ENABLED=true e configure as credenciais OAuth antes de conectar a agenda.
+              A conexao com Google Calendar esta desativada neste ambiente.
             } @else {
-              Faltam GOOGLE_CALENDAR_CLIENT_ID, GOOGLE_CALENDAR_CLIENT_SECRET e GOOGLE_CALENDAR_REDIRECT_URI no backend.
+              Configure as credenciais do Google Calendar para habilitar a sincronizacao.
             }
           </span>
         </div>

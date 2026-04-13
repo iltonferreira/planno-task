@@ -1,11 +1,10 @@
 ﻿<section class="page-shell">
   <header class="page-header">
     <div>
-      <p class="eyebrow">Payments</p>
-      <h1>Contas a pagar e recebiveis</h1>
+      <p class="eyebrow">Financeiro</p>
+      <h1>Contas a pagar e a receber</h1>
       <p class="page-copy">
-        Cadastre recebiveis, contas a pagar e movimentacoes financeiras da operacao do tenant. Esse
-        modulo continua disponivel para todos os clientes.
+        Registre receitas, despesas e recorrencias para acompanhar o fluxo financeiro do workspace.
       </p>
     </div>
     <span class="pill pill--soft">{{ paymentsStore.items().length }} lancamentos</span>
@@ -13,9 +12,9 @@
 
   <div class="metric-grid">
     <article class="metric-card">
-      <span>Recebiveis aprovados</span>
+      <span>Receitas aprovadas</span>
       <strong>{{ paymentsStore.income() | currency:'BRL':'symbol':'1.0-0' }}</strong>
-      <small>Entradas confirmadas no tenant atual</small>
+      <small>Entradas confirmadas no workspace atual</small>
     </article>
     <article class="metric-card">
       <span>Contas pagas</span>
@@ -39,7 +38,7 @@
       <div class="surface-head">
         <div>
           <p class="eyebrow">Nova conta</p>
-          <h2>Criar recebivel ou conta a pagar</h2>
+          <h2>Criar receita ou despesa</h2>
         </div>
       </div>
 
@@ -74,7 +73,7 @@
         <label class="field">
           <span>Direcao</span>
           <select formControlName="direction">
-            <option value="INCOME">Recebivel</option>
+            <option value="INCOME">Receita</option>
             <option value="EXPENSE">Conta a pagar</option>
           </select>
         </label>
