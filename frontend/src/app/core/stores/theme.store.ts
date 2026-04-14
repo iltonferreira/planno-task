@@ -6,7 +6,7 @@ import { ThemeMode } from '../models/domain.models';
 @Injectable({ providedIn: 'root' })
 export class ThemeStore {
   private readonly document = inject(DOCUMENT);
-  readonly mode = signal<ThemeMode>('dark');
+  readonly mode = signal<ThemeMode>('light');
 
   constructor() {
     effect(() => {

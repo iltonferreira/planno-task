@@ -39,6 +39,8 @@ O Planno Task foi desenhado como uma base SaaS para organizar essa operação em
 
 > Adicione screenshots reais antes de divulgar o projeto em processos seletivos ou para clientes.
 
+> A demo pública pode estar hospedada em serviços gratuitos. O primeiro acesso pode levar alguns segundos por cold start.
+
 ![Dashboard do Planno Task](docs/screenshots/dashboard.png)
 
 ![Kanban de tarefas](docs/screenshots/tasks-kanban.png)
