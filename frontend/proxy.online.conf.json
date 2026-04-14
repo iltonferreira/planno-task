@@ -3,6 +3,9 @@
     "target": "https://planno-task-api.onrender.com",
     "secure": true,
     "changeOrigin": true,
+    "headers": {
+      "Origin": "https://planno-task-web.onrender.com"
+    },
     "logLevel": "debug"
   }
 }
