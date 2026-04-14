@@ -1,0 +1,8 @@
+{
+  "/api": {
+    "target": "https://planno-task-api.onrender.com",
+    "secure": true,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  }
+}

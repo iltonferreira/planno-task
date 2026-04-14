@@ -4,10 +4,12 @@
   "scripts": {
     "prepare:runtime-config": "node scripts/write-runtime-config.mjs",
     "prestart": "npm run prepare:runtime-config",
+    "prestart:online-api": "npm run prepare:runtime-config",
     "prebuild": "npm run prepare:runtime-config",
     "prewatch": "npm run prepare:runtime-config",
     "ng": "ng",
     "start": "ng serve --proxy-config proxy.conf.json",
+    "start:online-api": "ng serve --proxy-config proxy.online.conf.json",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
